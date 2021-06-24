@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="name"
+            type="String" />
+
+        <variable
+            name="ilvl"
+            type="String" />
+
+        <variable
+            name="keylvl"
+            type="String" />
+
+        <variable
+            name="keycolor"
+            type="Integer" />
+
+        <variable
+            name="color"
+            type="Integer" />
+
+        <variable
+            name="onClick"
+            type="android.view.View.OnClickListener" />
+
+    </data>
+
+    <LinearLayout
+        android:id="@+id/clicklayout"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:weightSum="15"
+        android:orientation="horizontal"
+        android:onClick="@{onClick}"
+        android:longClickable="true">
+
+        <TextView
+            android:id="@+id/charName"
+            android:layout_weight="5"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@{name}"
+            android:gravity="start"
+            android:textColor="@{context.getColor(color)}"
+            android:layout_gravity="center_vertical"
+            android:textSize="16sp"/>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/colorAccent"/>
+
+        <TextView
+            android:id="@+id/ilvl"
+            android:layout_weight="3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@{ilvl}"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:layout_gravity="center_vertical"
+            android:textSize="16sp" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/colorAccent"/>
+
+        <TextView
+            android:id="@+id/keylvl"
+            android:layout_weight="2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@{keylvl}"
+            android:gravity="center"
+            android:textColor="@{context.getColor(keycolor)}"
+            android:layout_gravity="center_vertical"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+</layout>
