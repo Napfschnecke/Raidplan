@@ -8,6 +8,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.ui.AppBarConfiguration
@@ -93,6 +94,26 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
+    fun updateToolbar(
+        toArrow: Boolean = false,
+        boss: String = ""
+    ) {
+        runOnUiThread {
+            if (toArrow) {
+                binding.toolbar.title = boss
+                binding.toolbar.navigationIcon = ResourcesCompat.getDrawable(
+                    resources,
+                    R.drawable.ic_baseline_arrow_back_24,
+                    this.theme
+                )
+            } else {
+                binding.toolbar.title = resources.getString(R.string.app_name)
+                binding.toolbar.navigationIcon =
+                    ResourcesCompat.getDrawable(resources, R.drawable.ic_menu, this.theme)
+            }
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         val uri = intent.data
@@ -115,7 +136,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        drawerLayout.openDrawer(GravityCompat.START)
+        val currentFragment = supportFragmentManager.findFragmentById(R.id.host_fragment)
+        currentFragment?.let {
+            if (it::class == RaidPosMvrx::class) {
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.host_fragment, GuildFragmentMvrx(), "guild").commit()
+                updateToolbar(false)
+            } else {
+                drawerLayout.openDrawer(GravityCompat.START)
+            }
+        }
     }
 
     fun authorize(v: View) {
@@ -143,7 +173,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun openRaidPositioner(item: MenuItem) {
-        item.isChecked = !item.isChecked
+        updateToolbar(true, item.title.toString())
         supportFragmentManager.beginTransaction()
             .replace(R.id.host_fragment, RaidPosMvrx.newInstance("${item.title}"), "raidPos")
             .commit()

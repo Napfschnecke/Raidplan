@@ -9,6 +9,7 @@ import com.raidplan.areaSwitch
 import com.raidplan.areaSwitchKel
 import com.raidplan.data.Bosses
 import com.raidplan.roleBlob
+import com.raidplan.singleCheck
 import com.raidplan.util.MvRxViewModel
 import com.raidplan.util.simpleController
 import kotlinx.android.parcel.Parcelize
@@ -44,10 +45,12 @@ class RaidPosMvrx(boss: String) : ZoomFragment(boss) {
     override fun setSelection(sel: Int) {
         selectedIcon = sel
         viewModel.switchSelection(sel)
+        attacher.selectedIcon = sel
     }
 
     override fun updateImage(res: Int) {
         image?.setImageResource(res)
+        attacher.clearIcons()
     }
 
     override fun updateBossArea(boss: String) {
@@ -139,28 +142,6 @@ class RaidPosMvrx(boss: String) : ZoomFragment(boss) {
                 setSelection(5)
             }
         }
-        /*
-        zoom {
-            id("area")
-            if (state.boss == "Sylvanas Windrunner" || state.boss == "Kel'Thuzad") {
-                img(
-                    ResourcesCompat.getDrawable(
-                        resources,
-                        Bosses.getAreaByName("${state.boss}${state.phase}"),
-                        context?.theme
-                    )
-                )
-            } else {
-                img(
-                    ResourcesCompat.getDrawable(
-                        resources,
-                        Bosses.getAreaByName("${state.boss}"),
-                        context?.theme
-                    )
-                )
-            }
-        }
-         */
     }
 
     companion object {

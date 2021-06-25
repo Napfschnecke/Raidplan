@@ -39,4 +39,6 @@
     <string name="p2">Phase 2</string>
     <string name="phylactery">Phylactery</string>
 
+    <string name="lock_zoom">Lock Zoom</string>
+
 </resources>
