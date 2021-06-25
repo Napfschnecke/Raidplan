@@ -21,7 +21,8 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="@color/colorAccent" />
+                android:background="@color/colorAccent"
+                app:navigationIcon="@drawable/ic_menu"/>
 
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -42,6 +43,23 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        app:headerLayout="@layout/nav_header_main"
-        app:menu="@menu/activity_main_drawer" />
+        android:background="@color/black"
+        app:headerLayout="@layout/nav_header_main">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/refreshBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:background="@color/colorAccent"
+                app:icon="@drawable/ic_baseline_sync_24"
+                android:onClick="authorize" />
+        </RelativeLayout>
+    </com.google.android.material.navigation.NavigationView>
 </androidx.drawerlayout.widget.DrawerLayout>

@@ -1,9 +1,7 @@
 package com.raidplan.util
 
 import android.content.Context
-import android.provider.ContactsContract
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import com.raidplan.MainActivity
 import com.raidplan.R
@@ -21,41 +19,9 @@ import retrofit2.Response
 
 class CharPicker {
 
-    open fun buildCharPicker(context: Context) {
-
-        val list = mutableListOf<Character>()
-
+    fun persistMainChar(char: Character, mainActivity: MainActivity) {
         Realm.getDefaultInstance().use {
             it.executeTransaction { realm ->
-                val characters = realm.where(User::class.java).findFirst()?.characters
-                characters?.forEach { char ->
-                    val unmanaged = realm.copyFromRealm(char)
-                    list.add(unmanaged)
-                }
-            }
-        }
-        list.apply {
-            sortByDescending { it.level }
-        }
-        list.filter { it.level > 50 }
-
-        val adapter = CustomArrayAdapter(context, R.layout.simple_list_styled, list)
-
-        val builder = MaterialAlertDialogBuilder(context, R.style.MyDialogTheme)
-
-        builder
-            .setTitle(R.string.set_character)
-            .setAdapter(adapter) { dialog, id ->
-                persistMainChar(list[id], context as MainActivity)
-            }
-            .setCancelable(false)
-
-        builder.create().show()
-    }
-
-    private fun persistMainChar(char: Character, mainActivity: MainActivity) {
-        Realm.getDefaultInstance().use {
-            it.executeTransactionAsync { realm ->
                 val user = realm.where(User::class.java).findFirst()
                 val ch = realm.where(Character::class.java).equalTo("name", char.name)
                     .equalTo("server", char.server).findFirst()
@@ -73,7 +39,7 @@ class CharPicker {
             RequestService::class.java
         )
 
-        val call = requestService.getGuildName(
+        val call = requestService.getCharInfo(
             "${char.server?.lowercase()?.replace(" ", "-")}",
             "${char.name?.lowercase()}",
             "profile-eu",
@@ -88,16 +54,17 @@ class CharPicker {
                         .replace("\"", "")
 
                 Realm.getDefaultInstance().use {
-                    it.executeTransactionAsync { bgRealm ->
+                    it.executeTransaction { bgRealm ->
                         val user = bgRealm.where(User::class.java).findFirst()
-                        val ch = bgRealm.where(Character::class.java).equalTo("name", char.name)
-                            .equalTo("server", char.server).findFirst()
+                        val g = bgRealm.where(Guild::class.java).equalTo("name", guild).findFirst()
+                        if (g == null) bgRealm.createObject(Guild::class.java, guild)
                         user?.let { u ->
                             u.mainChar?.guild = guild
                         }
                     }
                 }
                 DataCrawler.getGuildMembers(guild, "${char.server}", activity)
+                activity.showMainFragment()
             }
 
             override fun onFailure(call: Call<JsonObject>, t: Throwable) {

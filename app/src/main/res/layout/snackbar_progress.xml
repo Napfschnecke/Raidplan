@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:background="@android:color/transparent"
+        android:textSize="18sp"
         android:ellipsize="end"/>
 
     <ProgressBar
@@ -21,5 +22,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:background="@android:color/transparent"
-        android:layout_alignParentRight="true"/>
+        android:layout_alignParentRight="true"
+        android:indeterminateDrawable="@drawable/progress"/>
 </RelativeLayout>

@@ -7,6 +7,7 @@ import com.raidplan.MainActivity
 import com.raidplan.R
 import com.raidplan.api.DataCrawler
 import com.raidplan.auth
+import com.raidplan.header
 import com.raidplan.util.MvRxViewModel
 import com.raidplan.util.simpleController
 
@@ -23,9 +24,8 @@ class AuthFragmentMvrx : BaseFragment() {
         auth {
             id("setchar")
             title(resources.getString(R.string.setup))
-            image(resources.getDrawable(R.drawable.ic_menu_camera))
             onClick(View.OnClickListener {
-                (activity as MainActivity).authorize()
+                (activity as MainActivity).authorize(View(activity))
             })
         }
     }

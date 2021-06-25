@@ -44,8 +44,8 @@ class ApiData {
                 val cLay = act.layoutInflater.inflate(R.layout.snackbar_progress, null)
                 lay.addView(cLay)
 
-                setBackgroundTint(act.resources.getColor(R.color.shaman))
-                setTextColor(act.resources.getColor(R.color.white))
+                setBackgroundTint(act.resources.getColor(R.color.colorAccent))
+                setTextColor(act.resources.getColor(R.color.black))
                 show()
             }
 

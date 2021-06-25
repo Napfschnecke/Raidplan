@@ -48,7 +48,7 @@ abstract class BaseFragment(var grid: Int = 0, var refreshable: Boolean = true) 
             if (refreshable) {
                 swipelayout.setOnRefreshListener {
                     swipelayout.isRefreshing = false
-                    //refreshData(this)
+                    refreshData(this)
                 }
             } else {
                 swipelayout.setOnRefreshListener {
@@ -70,30 +70,19 @@ abstract class BaseFragment(var grid: Int = 0, var refreshable: Boolean = true) 
 
 
     fun refreshData(view: View) {
+        /*
         progressBar = view.findViewById<ProgressBar>(R.id.update_progress).apply {
             isVisible = true
             progress = 0
         }
+         */
 
         val act = activity as MainActivity
 
-        /*
-        Realm.getDefaultInstance().use { realm ->
-            realm.where(Guild::class.java)
-                .equalTo("name", act.user?.mainChar?.guild)
-                .findFirst()?.let { g ->
-                    rank?.let { r ->
-                        val unmanaged =
-                            realm.copyFromRealm(g.roster).filter { it.guildRank <= r.toInt() }
-                        DataCrawler.getGuildRosterData(
-                            act,
-                            unmanaged,
-                            progressBar = progressBar
-                        )
-                    }
-                }
+        act.user?.mainChar?.let {
+            DataCrawler.getGuildMembers("${it.guild}", "${it.server}", act)
         }
-         */
+
         swipelayout.isRefreshing = false
     }
 

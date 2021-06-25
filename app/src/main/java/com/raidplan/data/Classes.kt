@@ -1,5 +1,6 @@
 package com.raidplan.data
 
+import android.graphics.drawable.Drawable
 import com.raidplan.R
 
 open class Classes {
@@ -40,6 +41,73 @@ open class Classes {
                 "12" -> R.color.dh
 
                 else -> android.R.color.white
+            }
+        }
+
+        fun getRoleBySpec(spec: String?): String {
+
+            return when (spec) {
+                "Guardian" -> "Tank"
+                "Protection" -> "Tank"
+                "Vengeance" -> "Tank"
+                "Brewmaster" -> "Tank"
+                "Blood" -> "Tank"
+
+                "Windwalker" -> "Melee"
+                "Subtlety" -> "Melee"
+                "Assassination" -> "Melee"
+                "Outlaw" -> "Melee"
+                "Unholy" -> "Melee"
+                "Frost" -> "Melee"
+                "Fury" -> "Melee"
+                "Arms" -> "Melee"
+                "Enhancer" -> "Melee"
+                "Survival" -> "Melee"
+                "Feral" -> "Melee"
+                "Havoc" -> "Melee"
+                "Retribution" -> "Melee"
+
+                "Elemental" -> "Range"
+                "Beast Mastery" -> "Range"
+                "Marksmanship" -> "Range"
+                "Balance" -> "Range"
+                "Shadow" -> "Range"
+
+                "Holy" -> "Healer"
+                "Discipline" -> "Healer"
+                "Restoration" -> "Healer"
+                "Mistweaver" -> "Melee"
+
+                else -> ""
+            }
+        }
+
+        fun getRoleByClass(c: String?): String {
+            return when (c) {
+                "8" -> "Range"
+                "9" -> "Range"
+                "4" -> "Melee"
+                else -> ""
+            }
+        }
+
+        fun getIconByRole(role: String): Int {
+            return when (role) {
+                "Range" -> R.drawable.ic_range
+                "Melee" -> R.drawable.ic_melee
+                "Tank" -> R.drawable.ic_tank
+                "Healer" -> R.drawable.ic_healer
+                else -> R.drawable.ic_tank
+            }
+        }
+
+        fun getCovenantIcon(cov: String?): Int {
+            return when (cov) {
+                "Night Fae" -> R.drawable.nightfae
+                "Venthyr" -> R.drawable.ventyhr
+                "Necrolord" -> R.drawable.necro
+                "Kyrian" -> R.drawable.kyrian
+                else -> R.drawable.nightfae
             }
         }
     }

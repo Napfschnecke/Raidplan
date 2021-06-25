@@ -20,5 +20,8 @@
     <color name="warlock">#8787ED</color>
     <color name="warrior">#C79C6E</color>
     <color name="legendary">#FFC107</color>
-    <color name="colorAccent">#686A6A</color>
+    <color name="colorAccent">#AACDCD</color>
+    <color name="colorAccentMuted">#5B7575</color>
+    <color name="darkBlue">#0C294A</color>
+    <color name="darkGray">#232425</color>
 </resources>

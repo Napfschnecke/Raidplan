@@ -34,7 +34,7 @@ object RequestGenerator {
         serviceClass: Class<S>?
     ): S {
         val httpClient: OkHttpClient.Builder = OkHttpClient.Builder().apply {
-            this.addInterceptor(logger)
+            //this.addInterceptor(logger)
         }
         builder.client(httpClient.build())
         retrofit = builder.build()

@@ -76,7 +76,7 @@ interface RequestService {
     ): Call<JsonObject>
 
     @GET("profile/wow/character/{realm-slug}/{name}")
-    fun getGuildName(
+    fun getCharInfo(
         @Path("realm-slug") realmSlug: String,
         @Path("name") name: String,
         @Query("namespace") namespace: String,

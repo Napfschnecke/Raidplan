@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="name"
+            type="String" />
+
+        <variable
+            name="lvl"
+            type="String" />
+
+        <variable
+            name="server"
+            type="String" />
+
+        <variable
+            name="color"
+            type="Integer" />
+
+        <variable
+            name="onClick"
+            type="android.view.View.OnClickListener" />
+
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        app:cardCornerRadius="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="3dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp">
+
+        <LinearLayout
+            android:id="@+id/clicklayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorAccentMuted"
+            android:longClickable="true"
+            android:onClick="@{onClick}"
+            android:orientation="horizontal"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:weightSum="15">
+
+            <TextView
+                android:id="@+id/charLvl"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="10dp"
+                android:layout_weight="2"
+                android:gravity="start"
+                android:text="@{lvl}"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:shadowColor="@color/black"
+                android:shadowDx="2"
+                android:shadowDy="2"
+                android:shadowRadius="5"/>
+
+            <TextView
+                android:id="@+id/charName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="8"
+                android:gravity="start"
+                android:text="@{name}"
+                android:textColor="@{context.getColor(color)}"
+                android:textSize="24sp"
+                android:shadowColor="@color/black"
+                android:shadowDx="2"
+                android:shadowDy="2"
+                android:shadowRadius="5"/>
+
+            <TextView
+                android:id="@+id/server"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="5"
+                android:gravity="end"
+                android:padding="3dp"
+                android:text="@{server}"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:layout_marginEnd="10dp"
+                android:shadowColor="@color/black"
+                android:shadowDx="2"
+                android:shadowDy="2"
+                android:shadowRadius="5"/>
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+</layout>

@@ -2,53 +2,84 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
+        <variable
+            name="filterTank"
+            type="Boolean" />
+
+        <variable
+            name="filterHeal"
+            type="Boolean" />
+
+        <variable
+            name="filterMelee"
+            type="Boolean" />
+
+        <variable
+            name="filterRange"
+            type="Boolean" />
+
+        <variable
+            name="onClickTank"
+            type="android.view.View.OnClickListener" />
+
+        <variable
+            name="onClickHeal"
+            type="android.view.View.OnClickListener" />
+
+        <variable
+            name="onClickMelee"
+            type="android.view.View.OnClickListener" />
+
+        <variable
+            name="onClickRange"
+            type="android.view.View.OnClickListener" />
 
     </data>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:weightSum="12">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:weightSum="15"
-            android:orientation="horizontal">
+        <CheckBox
+            android:id="@+id/check_tank"
+            android:text="@string/tanks"
+            android:textColor="@color/colorAccent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:checked="@{!filterTank}"
+            android:onClick="@{onClickTank}"/>
 
-            <TextView
-                android:id="@+id/charName"
-                android:layout_weight="5"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="@string/char_name"
-                android:textColor="@color/colorAccent"
-                android:gravity="start"
-                android:layout_gravity="center_vertical"
-                android:textSize="18sp" />
+        <CheckBox
+            android:id="@+id/check_healer"
+            android:text="@string/healer"
+            android:textColor="@color/colorAccent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:checked="@{!filterHeal}"
+            android:onClick="@{onClickHeal}"/>
 
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/colorAccent"/>
+        <CheckBox
+            android:id="@+id/check_melee"
+            android:text="@string/melee"
+            android:textColor="@color/colorAccent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:checked="@{!filterMelee}"
+            android:onClick="@{onClickMelee}"/>
 
-            <TextView
-                android:id="@+id/key"
-                android:layout_weight="2"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="@string/key_level"
-                android:textColor="@color/colorAccent"
-                android:gravity="center"
-                android:layout_gravity="center_vertical"
-                android:textSize="18sp" />
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:background="@color/colorAccent"
-            android:layout_height="2dp" />
+        <CheckBox
+            android:id="@+id/check_range"
+            android:text="@string/range"
+            android:textColor="@color/colorAccent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:checked="@{!filterRange}"
+            android:onClick="@{onClickRange}"/>
 
     </LinearLayout>
 </layout>

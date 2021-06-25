@@ -19,9 +19,13 @@ open class Character() : RealmObject(), Parcelable {
     var guildRank: Int = 20
     var itemLevel: Int = 0
     var itemLevelMax: Int = 0
-    var blacklisted: Boolean = false
+    var covenant: String? = null
+    var renown: Int = 0
     var arena2s: Int = 0
     var arena3s: Int = 0
+    var activeSpec: String? = null
+    var role: String? = null
+    var roster: Boolean = false
 
     var dungeonList: RealmList<Dungeon> = RealmList()
 

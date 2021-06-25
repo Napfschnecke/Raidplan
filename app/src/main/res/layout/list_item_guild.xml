@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+        <import type="android.view.View"/>
         <variable
             name="name"
             type="String" />
@@ -11,74 +13,139 @@
             type="String" />
 
         <variable
-            name="keylvl"
-            type="String" />
-
-        <variable
-            name="keycolor"
-            type="Integer" />
-
-        <variable
             name="color"
             type="Integer" />
 
         <variable
-            name="onClick"
-            type="android.view.View.OnClickListener" />
+            name="renown"
+            type="String" />
+
+        <variable
+            name="roster"
+            type="Boolean" />
+
+        <variable
+            name="cov"
+            type="android.graphics.drawable.Drawable" />
+
+        <variable
+            name="onLongClick"
+            type="android.view.View.OnLongClickListener" />
+
+        <variable
+            name="img"
+            type="android.graphics.drawable.Drawable" />
 
     </data>
 
-    <LinearLayout
-        android:id="@+id/clicklayout"
+    <com.google.android.material.card.MaterialCardView
+        app:cardCornerRadius="5dp"
         android:layout_width="match_parent"
-        android:layout_height="32dp"
-        android:weightSum="15"
-        android:orientation="horizontal"
-        android:onClick="@{onClick}"
+        android:layout_height="wrap_content"
+        android:elevation="3dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp"
         android:longClickable="true">
 
-        <TextView
-            android:id="@+id/charName"
-            android:layout_weight="5"
-            android:layout_width="0dp"
+        <RelativeLayout
+            android:id="@+id/clicklayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{name}"
-            android:gravity="start"
-            android:textColor="@{context.getColor(color)}"
-            android:layout_gravity="center_vertical"
-            android:textSize="16sp"/>
+            android:background="@color/colorAccentMuted"
+            android:longClickable="true"
+            app:onLongClickListener="@{onLongClick}"
+            android:orientation="horizontal">
 
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="@color/colorAccent"/>
+            <ImageView
+                android:id="@+id/role"
+                android:background="@{img}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_gravity="center"
+                android:layout_centerInParent="true"
+                android:layout_alignParentStart="true"/>
 
-        <TextView
-            android:id="@+id/ilvl"
-            android:layout_weight="3"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@{ilvl}"
-            android:gravity="center"
-            android:textColor="@android:color/white"
-            android:layout_gravity="center_vertical"
-            android:textSize="16sp" />
+            <TextView
+                android:id="@+id/charName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_centerInParent="true"
+                android:gravity="center_vertical"
+                android:text="@{name}"
+                android:textColor="@{context.getColor(color)}"
+                android:textSize="24sp"
+                android:shadowColor="@color/black"
+                android:shadowDx="2"
+                android:shadowDy="2"
+                android:shadowRadius="5"
+                android:layout_toEndOf="@id/role"/>
 
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="@color/colorAccent"/>
+            <ImageView
+                android:id="@+id/roster"
+                android:background="@drawable/ic_baseline_playlist_add_check_24"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_gravity="center"
+                android:layout_centerInParent="true"
+                android:layout_toStartOf="@id/gear"
+                android:visibility="@{roster ? View.VISIBLE : View.GONE}"/>
 
-        <TextView
-            android:id="@+id/keylvl"
-            android:layout_weight="2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@{keylvl}"
-            android:gravity="center"
-            android:textColor="@{context.getColor(keycolor)}"
-            android:layout_gravity="center_vertical"
-            android:textSize="16sp" />
+            <LinearLayout
+                android:id="@+id/gear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginEnd="10dp"
+                android:layout_alignParentEnd="true">
 
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/charIlvl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="@{ilvl}"
+                    android:textColor="@color/white"
+                    android:textSize="22sp"
+                    android:shadowColor="@color/black"
+                    android:shadowDx="2"
+                    android:shadowDy="2"
+                    android:shadowRadius="5"
+                    />
+
+                <LinearLayout
+                    android:id="@+id/info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_gravity="center">
+
+                    <ImageView
+                        android:id="@+id/cov"
+                        android:background="@{cov}"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"/>
+
+                    <TextView
+                        android:id="@+id/renown"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{renown}"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"
+                        android:shadowColor="@color/black"
+                        android:shadowDx="2"
+                        android:shadowDy="2"
+                        android:shadowRadius="5"
+                        />
+                </LinearLayout>
+            </LinearLayout>
+
+        </RelativeLayout>
+    </com.google.android.material.card.MaterialCardView>
 </layout>

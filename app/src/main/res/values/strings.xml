@@ -10,8 +10,15 @@
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
-    <string name="set_character">Set Character</string>
+    <string name="set_character">Select a character in the guild you want.</string>
     <string name="char_name">Name</string>
     <string name="key_level">Key</string>
-    <string name="setup">Begin Setup</string>
+    <string name="setup">Synchronize your Account</string>
+
+    <string name="tanks">Tanks</string>
+    <string name="healer">Healer</string>
+    <string name="melee">Melee</string>
+    <string name="range">Range</string>
+
+    <string name="longclick_to_add">Hold entry to add or remove from roster.</string>
 </resources>

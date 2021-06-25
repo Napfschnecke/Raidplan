@@ -3,17 +3,11 @@ package com.raidplan.api
 import android.util.Log
 import android.widget.ProgressBar
 import androidx.core.view.isVisible
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.GsonBuilder
-import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.raidplan.MainActivity
-import com.raidplan.data.Character
-import com.raidplan.data.Dungeon
-import com.raidplan.data.Guild
-import com.raidplan.data.User
-import com.raidplan.util.CharPicker
+import com.raidplan.data.*
 import io.realm.Realm
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -256,7 +250,7 @@ open class DataCrawler {
                                                         )
                                                 }"
                                             ).findFirst()
-                                        if (ch == null && char.asJsonObject["level"].asInt >= 50) {
+                                        if (ch == null && char.asJsonObject["level"].asInt == 60) {
                                             ch = bgRealm.createObject(
                                                 Character::class.java,
                                                 "${
@@ -284,7 +278,7 @@ open class DataCrawler {
                                                 level =
                                                     char.asJsonObject["level"].asInt
                                                 playerClass =
-                                                    char.asJsonObject["playable_class"].asJsonObject["name"].toString()
+                                                    char.asJsonObject["playable_class"].asJsonObject["id"].toString()
                                                 char.asJsonObject["guild"]?.let {
                                                     this.guild =
                                                         char.asJsonObject["guild"].toString()
@@ -300,7 +294,7 @@ open class DataCrawler {
                         }
                     }
                     snackbar.dismiss()
-                    CharPicker().buildCharPicker(act)
+                    act.showCharPicker()
 
                 }
 
@@ -325,8 +319,8 @@ open class DataCrawler {
             }
 
             val call = requestService.getGuildRoster(
-                server.lowercase()?.replace(" ", "-"),
-                guildName.lowercase()?.replace(" ", "-"),
+                server.lowercase().replace(" ", "-"),
+                guildName.lowercase().replace(" ", "-"),
                 "eu",
                 "profile-eu",
                 "en_gb",
@@ -340,7 +334,7 @@ open class DataCrawler {
                     val member = response.body()?.get("members")?.asJsonArray
 
                     Realm.getDefaultInstance().use { realm ->
-                        realm.executeTransaction { r ->
+                        realm.executeTransactionAsync { r ->
                             g = r.where(Guild::class.java).equalTo("name", guildName)
                                 .findFirst()
                             if (g == null) {
@@ -354,7 +348,7 @@ open class DataCrawler {
                                     .equalTo("server", char?.server)
                                     .findFirst()
 
-                                if (c == null) {
+                                if (c == null && ch.asJsonObject["level"].asInt == 60) {
                                     c = r.createObject(
                                         Character::class.java,
                                         "${ch.asJsonObject["name"]}${ch.asJsonObject["realm"]}"
@@ -365,15 +359,61 @@ open class DataCrawler {
                                     c.server = char?.server
                                     c.guildRank = m.asJsonObject["rank"].asInt
                                     c.level = ch.asJsonObject["level"].asInt
-                                } else {
+                                } else if (c != null) {
                                     c.guildRank = m.asJsonObject["rank"].asInt
                                 }
 
-                                if (g?.roster?.contains(c) == false) {
+                                if (c != null && g?.roster?.contains(c) == false) {
                                     g?.roster?.add(c)
                                 }
                             }
-                            act.showMainFragment()
+                            getGuildRosterData(r.copyFromRealm(g?.roster))
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+
+                }
+            })
+        }
+
+        fun getCharInfo(server: String, name: String) {
+            val call = requestService.getCharInfo(
+                server.lowercase()?.replace(" ", "-"),
+                name.lowercase(),
+                "profile-eu",
+                "en_gb",
+                "${ApiData.AUTH_TOKEN}"
+            )
+
+            call.enqueue(object : Callback<JsonObject> {
+                override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+
+                    Realm.getDefaultInstance().use {
+                        it.executeTransaction { bgRealm ->
+                            var ch = bgRealm.where(Character::class.java).equalTo("name", name)
+                                .equalTo("server", server).findFirst()
+                            response.body()?.asJsonObject?.let { js ->
+                                ch?.itemLevel =
+                                    js.getAsJsonPrimitive("equipped_item_level").asInt
+                                ch?.itemLevelMax =
+                                    js.getAsJsonPrimitive("average_item_level").asInt
+                                ch?.activeSpec =
+                                    js.getAsJsonObject("active_spec")
+                                        ?.getAsJsonPrimitive("name")?.asString
+                                if (Classes.getRoleByClass(ch?.playerClass) != "") {
+                                    ch?.role = Classes.getRoleByClass(ch?.playerClass)
+                                } else {
+                                    ch?.role = Classes.getRoleBySpec(ch?.activeSpec)
+                                }
+                                val covInfo = js.getAsJsonObject("covenant_progress")
+                                ch?.covenant =
+                                    covInfo.getAsJsonObject("chosen_covenant")
+                                        ?.getAsJsonPrimitive("name")?.asString
+                                ch?.renown =
+                                    covInfo.getAsJsonPrimitive("renown_level").asInt
+                            }
                         }
                     }
                 }
@@ -385,21 +425,18 @@ open class DataCrawler {
         }
 
         fun getGuildRosterData(
-            act: MainActivity,
-            roster: List<Character>,
-            bar: Snackbar? = null,
-            progressBar: ProgressBar? = null
+            roster: List<Character>
         ) {
             step = 1000.0 / roster.size.toDouble()
             GlobalScope.launch {
                 var i = 0
                 roster.forEach {
+                    getCharInfo("${it.server}", "${it.name}")
                     i++
                     if (i % 10 == 0) {
                         Thread.sleep(100)
                     }
                 }
-                bar?.dismiss()
             }
         }
 
