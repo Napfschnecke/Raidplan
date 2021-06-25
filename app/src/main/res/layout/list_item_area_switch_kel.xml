@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="p1Check"
+            type="Boolean" />
+
+        <variable
+            name="p2Check"
+            type="Boolean" />
+
+        <variable
+            name="onClick1"
+            type="android.view.View.OnClickListener" />
+
+        <variable
+            name="onClick2"
+            type="android.view.View.OnClickListener" />
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="12">
+
+        <CheckBox
+            android:id="@+id/p1"
+            android:text="@string/p1"
+            android:textColor="@color/colorAccent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="6"
+            android:onClick="@{onClick1}"
+            android:checked="@{p1Check}"
+            android:enabled="@{!p1Check}"/>
+
+        <CheckBox
+            android:id="@+id/int1"
+            android:text="@string/phylactery"
+            android:textColor="@color/colorAccent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="6"
+            android:onClick="@{onClick2}"
+            android:checked="@{p2Check}"
+            android:enabled="@{!p2Check}"/>
+
+
+    </LinearLayout>
+</layout>

@@ -44,22 +44,9 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         android:background="@color/black"
-        app:headerLayout="@layout/nav_header_main">
+        app:headerLayout="@layout/nav_header_main"
+        app:itemTextColor="@color/menu_highlight"
+        app:menu="@menu/activity_main_drawer">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:orientation="horizontal">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/refreshBtn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:background="@color/colorAccent"
-                app:icon="@drawable/ic_baseline_sync_24"
-                android:onClick="authorize" />
-        </RelativeLayout>
     </com.google.android.material.navigation.NavigationView>
 </androidx.drawerlayout.widget.DrawerLayout>

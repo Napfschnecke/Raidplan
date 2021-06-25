@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_tar"
+            android:onClick="openRaidPositioner"
+            android:title="@string/tarragrue" />
+        <item
+            android:id="@+id/nav_eye"
+            android:onClick="openRaidPositioner"
+            android:title="@string/eye" />
+        <item
+            android:id="@+id/nav_nine"
+            android:onClick="openRaidPositioner"
+            android:title="@string/nine" />
+        <item
+            android:id="@+id/nav_remnant"
+            android:onClick="openRaidPositioner"
+            android:title="@string/remnant" />
+        <item
+            android:id="@+id/nav_soulrender"
+            android:onClick="openRaidPositioner"
+            android:title="@string/soulrender" />
+        <item
+            android:id="@+id/nav_painsmith"
+            android:onClick="openRaidPositioner"
+            android:title="@string/painsmith" />
+        <item
+            android:id="@+id/nav_guardian"
+            android:onClick="openRaidPositioner"
+            android:title="@string/guardian" />
+        <item
+            android:id="@+id/nav_fatescribe"
+            android:onClick="openRaidPositioner"
+            android:title="@string/fatescribe" />
+        <item
+            android:id="@+id/nav_kelthuzad"
+            android:onClick="openRaidPositioner"
+            android:title="@string/kelthuzad" />
+        <item
+            android:id="@+id/nav_sylvanas"
+            android:onClick="openRaidPositioner"
+            android:title="@string/sylvanas" />
+    </group>
+</menu>

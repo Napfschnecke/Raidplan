@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="selectTank"
+            type="Boolean" />
+
+        <variable
+            name="selectHeal"
+            type="Boolean" />
+
+        <variable
+            name="selectMelee"
+            type="Boolean" />
+
+        <variable
+            name="selectRange"
+            type="Boolean" />
+
+        <variable
+            name="selectBoss"
+            type="Boolean" />
+
+        <variable
+            name="onClick1"
+            type="android.view.View.OnClickListener" />
+
+        <variable
+            name="onClick2"
+            type="android.view.View.OnClickListener" />
+
+        <variable
+            name="onClick3"
+            type="android.view.View.OnClickListener" />
+
+        <variable
+            name="onClick4"
+            type="android.view.View.OnClickListener" />
+
+        <variable
+            name="onClick5"
+            type="android.view.View.OnClickListener" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="15"
+        android:paddingTop="10dp">
+
+        <ImageView
+            android:id="@+id/tanks"
+            android:text="@string/p1"
+            android:textColor="@color/colorAccent"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:src="@{selectTank ? @drawable/tank_blob_selected :@drawable/tank_blob }"
+            android:layout_weight="3"
+            android:onClick="@{onClick1}"/>
+
+        <ImageView
+            android:id="@+id/healer"
+            android:text="@string/p1"
+            android:textColor="@color/colorAccent"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:src="@{selectHeal ? @drawable/healer_blob_selected :@drawable/healer_blob }"
+            android:layout_weight="3"
+            android:onClick="@{onClick2}"/>
+        <ImageView
+            android:id="@+id/melee"
+            android:text="@string/p1"
+            android:textColor="@color/colorAccent"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:src="@{selectMelee ? @drawable/melee_blob_selected :@drawable/melee_blob }"
+            android:layout_weight="3"
+            android:onClick="@{onClick3}"/>
+        <ImageView
+            android:id="@+id/range"
+            android:text="@string/p1"
+            android:textColor="@color/colorAccent"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:src="@{selectRange ? @drawable/range_blob_selected :@drawable/range_blob }"
+            android:layout_weight="3"
+            android:onClick="@{onClick4}"/>
+
+        <ImageView
+            android:id="@+id/boss"
+            android:text="@string/p1"
+            android:textColor="@color/colorAccent"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:src="@{selectBoss ? @drawable/boss_blob_selected :@drawable/boss_blob }"
+            android:layout_weight="3"
+            android:onClick="@{onClick5}"/>
+
+    </LinearLayout>
+</layout>

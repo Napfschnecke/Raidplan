@@ -58,7 +58,7 @@
 
             <ImageView
                 android:id="@+id/role"
-                android:background="@{img}"
+                android:src="@{img}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
@@ -85,7 +85,7 @@
 
             <ImageView
                 android:id="@+id/roster"
-                android:background="@drawable/ic_baseline_playlist_add_check_24"
+                android:src="@drawable/ic_baseline_playlist_add_check_24"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
@@ -127,7 +127,7 @@
 
                     <ImageView
                         android:id="@+id/cov"
-                        android:background="@{cov}"
+                        android:src="@{cov}"
                         android:layout_width="24dp"
                         android:layout_height="24dp"/>
 

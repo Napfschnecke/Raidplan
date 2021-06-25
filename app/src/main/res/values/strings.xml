@@ -21,4 +21,22 @@
     <string name="range">Range</string>
 
     <string name="longclick_to_add">Hold entry to add or remove from roster.</string>
+
+    <string name="tarragrue">The Tarragrue</string>
+    <string name="eye">The Eye of the Jailer</string>
+    <string name="nine">The Nine</string>
+    <string name="remnant">Remnant of Ner\'zhul</string>
+    <string name="soulrender">Soulrender Dormazain</string>
+    <string name="painsmith">Painsmith Raznal</string>
+    <string name="guardian">Guardian of the First Ones</string>
+    <string name="fatescribe">Fatescribe Roh-Kalo</string>
+    <string name="kelthuzad">Kel\'Thuzad</string>
+    <string name="sylvanas">Sylvanas Windrunner</string>
+
+    <string name="p1">Phase 1</string>
+    <string name="chains1">Chains 1</string>
+    <string name="chains2">Chains 2</string>
+    <string name="p2">Phase 2</string>
+    <string name="phylactery">Phylactery</string>
+
 </resources>
