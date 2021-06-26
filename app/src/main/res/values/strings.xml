@@ -9,6 +9,7 @@
     <string name="guild">Guild</string>
 
     <string name="longclick_to_add">Hold entry to add or remove from roster.</string>
+    <string name="rank_slider">Minimum guildrank to show:</string>
 
     <string name="tarragrue">The Tarragrue</string>
     <string name="eye">The Eye of the Jailer</string>

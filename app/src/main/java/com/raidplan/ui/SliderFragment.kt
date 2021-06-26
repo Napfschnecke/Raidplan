@@ -5,23 +5,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.airbnb.epoxy.EpoxyRecyclerView
 import com.airbnb.mvrx.BaseMvRxFragment
+import com.google.android.material.slider.Slider
 import com.raidplan.MainActivity
 import com.raidplan.R
 import com.raidplan.api.DataCrawler
+import com.raidplan.data.User
 import com.raidplan.util.MvRxEpoxyController
+import io.realm.Realm
 
-abstract class BaseFragment(var grid: Int = 0, var refreshable: Boolean = true) :
+abstract class SliderFragment(var grid: Int = 0, var refreshable: Boolean = true) :
     BaseMvRxFragment() {
 
     lateinit var recyclerView: EpoxyRecyclerView
     lateinit var swipelayout: SwipeRefreshLayout
     lateinit var progressBar: ProgressBar
+    lateinit var slider: Slider
 
     val epoxyController by lazy { epoxyController() }
 
@@ -30,7 +33,7 @@ abstract class BaseFragment(var grid: Int = 0, var refreshable: Boolean = true) 
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_base_mvrx, container, false).apply {
+        return inflater.inflate(R.layout.fragment_slider_mvrx, container, false).apply {
             swipelayout = findViewById(R.id.swipe_layout)
             swipelayout.setColorSchemeColors(
                 resources.getColor(R.color.hunter),
@@ -50,6 +53,18 @@ abstract class BaseFragment(var grid: Int = 0, var refreshable: Boolean = true) 
                 }
             }
 
+            slider = findViewById(R.id.slider)
+            Realm.getDefaultInstance().use {
+                it.executeTransactionAsync { bgRealm ->
+                    val u =
+                        bgRealm.where(User::class.java).findFirst()
+                    u?.let { user ->
+                        slider.value = user.rankPref
+                        findViewById<TextView>(R.id.select_rank_value)?.text =
+                            user.rankPref.toInt().toString()
+                    }
+                }
+            }
             recyclerView = findViewById(R.id.recycler_view)
             recyclerView.setController(epoxyController)
             if (grid != 0) {

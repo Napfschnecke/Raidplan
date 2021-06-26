@@ -1,8 +1,8 @@
 package com.raidplan.ui
 
-import android.os.Handler
-import android.os.Looper
+import android.os.Bundle
 import android.view.View
+import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import com.airbnb.mvrx.MvRxState
 import com.airbnb.mvrx.fragmentViewModel
@@ -12,8 +12,6 @@ import com.raidplan.data.Classes
 import com.raidplan.data.Guild
 import com.raidplan.data.User
 import com.raidplan.guild
-import com.raidplan.headerGuild
-import com.raidplan.headerSmall
 import com.raidplan.util.MvRxViewModel
 import com.raidplan.util.simpleController
 import io.realm.Realm
@@ -22,12 +20,7 @@ import io.realm.RealmList
 data class GuildState(
     var user: User? = null,
     var member: List<Character>? = listOf(),
-    var rank: String = "3",
-    var filterTank: Boolean = false,
-    var filterHeal: Boolean = false,
-    var filterMelee: Boolean = false,
-    var filterRange: Boolean = false,
-    var hint: Boolean = true
+    var rank: Float = 2.0f
 ) :
     MvRxState
 
@@ -62,87 +55,34 @@ class GuildViewModel(initialState: GuildState) : MvRxViewModel<GuildState>(initi
                     )
                 }
             }
-        }
+            val um = realm.copyFromRealm(user)
 
-        Handler(Looper.getMainLooper()).postDelayed({
-            setState { copy(hint = false) }
-        }, 5000)
+            setState { copy(rank = um.rankPref) }
+        }
     }
 
-    fun filter(role: String, shouldFilter: Boolean) {
-
-        when (role) {
-            "Tank" -> setState {
-                copy(
-                    filterTank = shouldFilter
-                )
-            }
-            "Healer" -> setState {
-                copy(
-                    filterHeal = shouldFilter
-                )
-            }
-            "Melee" -> setState {
-                copy(
-                    filterMelee = shouldFilter
-                )
-            }
-            "Range" -> setState {
-                copy(
-                    filterRange = shouldFilter
-                )
+    fun updateRank(value: Float) {
+        withState { state ->
+            Realm.getDefaultInstance().use {
+                it.executeTransactionAsync { bgRealm ->
+                    val u =
+                        bgRealm.where(User::class.java).equalTo("accountId", state.user?.accountId)
+                            .findFirst()
+                    u?.rankPref = value
+                }
             }
         }
+        setState { copy(rank = value) }
     }
 }
 
-class GuildFragmentMvrx : BaseFragment() {
+class GuildFragmentMvrx : SliderFragment() {
 
     private val viewModel: GuildViewModel by fragmentViewModel()
 
     override fun epoxyController() = simpleController(viewModel) { state ->
 
-        headerGuild {
-            id("filterBoxes")
-            filterTank(state.filterTank)
-            onClickTank(View.OnClickListener {
-                viewModel.filter("Tank", !state.filterTank)
-            })
-            filterHeal(state.filterHeal)
-            onClickHeal(View.OnClickListener {
-                viewModel.filter("Healer", !state.filterHeal)
-            })
-            filterMelee(state.filterMelee)
-            onClickMelee(View.OnClickListener {
-                viewModel.filter("Melee", !state.filterMelee)
-            })
-            filterRange(state.filterRange)
-            onClickRange(View.OnClickListener {
-                viewModel.filter("Range", !state.filterRange)
-            })
-        }
-
-        if (state.hint) {
-            headerSmall {
-                id("hint")
-                title(resources.getString(R.string.longclick_to_add))
-                color(R.color.colorAccent)
-            }
-        }
-
-        var filteredMembers = state.member
-        if (state.filterTank) {
-            filteredMembers = filteredMembers?.filterNot { m -> m.role == "Tank" }
-        }
-        if (state.filterHeal) {
-            filteredMembers = filteredMembers?.filterNot { m -> m.role == "Healer" }
-        }
-        if (state.filterMelee) {
-            filteredMembers = filteredMembers?.filterNot { m -> m.role == "Melee" }
-        }
-        if (state.filterRange) {
-            filteredMembers = filteredMembers?.filterNot { m -> m.role == "Range" }
-        }
+        val filteredMembers = state.member?.filter { it.guildRank <= state.rank }
 
         filteredMembers?.forEach { char ->
 
@@ -150,7 +90,6 @@ class GuildFragmentMvrx : BaseFragment() {
                 id(char.name)
                 val imgRes = Classes.getIconByRole("${char.role}")
                 img(ResourcesCompat.getDrawable(resources, imgRes, context?.theme))
-                roster(char.roster)
                 cov(
                     ResourcesCompat.getDrawable(
                         resources,
@@ -160,30 +99,26 @@ class GuildFragmentMvrx : BaseFragment() {
                 )
                 renown("${char.renown}")
                 name(char.name)
+                spec("${char.activeSpec} ${Classes.getClassById(char.playerClass)}")
                 ilvl("${char.itemLevel}ilvl")
                 color(Classes.getClassColor(char.playerClass))
-                onLongClick { v ->
-                    Realm.getDefaultInstance().use { r ->
-                        r.executeTransactionAsync { bgRealm ->
-                            var char =
-                                bgRealm.where(Character::class.java).equalTo("name", char.name)
-                                    .findFirst()
-                            char?.roster?.let {
-                                char.roster = !char.roster
-                            }
-
-                        }
-                    }
-                    true
+                onClick { v ->
                 }
             }
         }
-
     }
 
     override fun onDestroy() {
         viewModel.guildMembers?.removeAllChangeListeners()
         viewModel.realm.close()
         super.onDestroy()
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        slider.addOnChangeListener { s, value, fromUser ->
+            viewModel.updateRank(value)
+            view.findViewById<TextView>(R.id.select_rank_value)?.text = value.toInt().toString()
+        }
+        super.onViewCreated(view, savedInstanceState)
     }
 }

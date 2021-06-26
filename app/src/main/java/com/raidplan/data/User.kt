@@ -16,4 +16,5 @@ open class User : RealmObject() {
     var currentPeriod: Int = 0
     var showTutorial: Boolean = true
     var shouldReset: Boolean = true
+    var rankPref: Float = 3.0f
 }

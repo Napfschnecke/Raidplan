@@ -1,7 +1,10 @@
 package com.raidplan
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -9,6 +12,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -77,20 +81,24 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        if (user == null) {
-            binding.toolbar.title = resources.getString(R.string.authorize)
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.host_fragment, AuthFragmentMvrx(), "auth").commit()
-            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+        when {
+            user == null -> {
+                binding.toolbar.title = resources.getString(R.string.authorize)
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.host_fragment, AuthFragmentMvrx(), "auth").commit()
+                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
 
-        } else if (user?.mainChar != null) {
-            updateToolbar(false)
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.host_fragment, GuildFragmentMvrx(), "guild").commit()
-        } else {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.host_fragment, CharPickerFragment(), "chars").commit()
-            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+            }
+            user?.mainChar != null -> {
+                updateToolbar(false)
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.host_fragment, GuildFragmentMvrx(), "guild").commit()
+            }
+            else -> {
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.host_fragment, CharPickerFragment(), "chars").commit()
+                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+            }
         }
 
     }
@@ -130,20 +138,30 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         val uri = intent.data
-        uri?.let {
-            if (it.toString().startsWith(ApiData.REDIRECT_URI)) {
-                val code = it.getQueryParameter("code")
-                if (code != null) {
-                    Realm.getDefaultInstance().use { realm ->
-                        realm.executeTransactionAsync { bgRealm ->
-                            bgRealm.where(OauthStrings::class.java).findFirst()?.let { strings ->
-                                strings.authCode = code
+        if (user == null) {
+            uri?.let {
+                if (it.toString().startsWith(ApiData.REDIRECT_URI)) {
+                    val code = it.getQueryParameter("code")
+                    if (code != null) {
+                        Realm.getDefaultInstance().use { realm ->
+                            realm.executeTransactionAsync { bgRealm ->
+                                bgRealm.where(OauthStrings::class.java).findFirst()
+                                    ?.let { strings ->
+                                        strings.authCode = code
+                                    }
                             }
                         }
+                        ApiData.AUTH_CODE = code
+                        ApiData.getAuthToken(this)
                     }
-                    ApiData.AUTH_CODE = code
-                    ApiData.getAuthToken(this)
                 }
+            }
+        }
+        val currentFragment = supportFragmentManager.findFragmentById(R.id.host_fragment)
+        currentFragment?.let {
+            when (it::class) {
+                RaidPosMvrx::class -> updateToolbar(true, "$boss")
+                GuildFragmentMvrx::class -> updateToolbar(false)
             }
         }
     }
@@ -241,12 +259,44 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun exportScreen(item: MenuItem) {
+        val permission =
+            ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+
+        val permitted = (permission == PackageManager.PERMISSION_GRANTED)
+        if (permitted) {
+            /*
         ScreenshotExporter().store(
             ScreenshotExporter().getScreenShot(binding.hostFragment.findViewById(R.id.zoomcont)),
             "plan.png",
             this,
             "${this.boss}"
         )
+         */
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 69)
+            }
+        }
     }
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 69) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                println("permission manually granted")
+                ScreenshotExporter().store(
+                    ScreenshotExporter().getScreenShot(binding.hostFragment.findViewById(R.id.zoomcont)),
+                    "plan.png",
+                    this,
+                    "${this.boss}"
+                )
+            } else {
+                println("unlucky")
+            }
+        }
+    }
 }

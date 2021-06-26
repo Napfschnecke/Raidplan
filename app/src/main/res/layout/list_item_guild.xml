@@ -21,16 +21,17 @@
             type="String" />
 
         <variable
-            name="roster"
-            type="Boolean" />
+            name="spec"
+            type="String" />
+
+        <variable
+            name="onClick"
+            type="View.OnClickListener" />
 
         <variable
             name="cov"
             type="android.graphics.drawable.Drawable" />
 
-        <variable
-            name="onLongClick"
-            type="android.view.View.OnLongClickListener" />
 
         <variable
             name="img"
@@ -53,8 +54,8 @@
             android:layout_height="wrap_content"
             android:background="@color/colorAccentMuted"
             android:longClickable="true"
-            app:onLongClickListener="@{onLongClick}"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:onClick="@{onClick}">
 
             <ImageView
                 android:id="@+id/role"
@@ -67,48 +68,64 @@
                 android:layout_centerInParent="true"
                 android:layout_alignParentStart="true"/>
 
-            <TextView
-                android:id="@+id/charName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_centerInParent="true"
-                android:gravity="center_vertical"
-                android:text="@{name}"
-                android:textColor="@{context.getColor(color)}"
-                android:textSize="24sp"
-                android:shadowColor="@color/black"
-                android:shadowDx="2"
-                android:shadowDy="2"
-                android:shadowRadius="5"
-                android:layout_toEndOf="@id/role"/>
-
-            <ImageView
-                android:id="@+id/roster"
-                android:src="@drawable/ic_baseline_playlist_add_check_24"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:layout_gravity="center"
-                android:layout_centerInParent="true"
-                android:layout_toStartOf="@id/gear"
-                android:visibility="@{roster ? View.VISIBLE : View.GONE}"/>
-
             <LinearLayout
-                android:id="@+id/gear"
+                android:id="@+id/namespec"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginEnd="10dp"
-                android:layout_alignParentEnd="true">
+                android:layout_toEndOf="@id/role"
+                android:layout_marginStart="10dp">
 
                 <TextView
-                    android:id="@+id/charIlvl"
+                    android:id="@+id/charName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:text="@{ilvl}"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="start"
+                    android:text="@{name}"
+                    android:textColor="@{context.getColor(color)}"
+                    android:textSize="20sp"
+                    android:shadowColor="@color/black"
+                    android:shadowDx="2"
+                    android:shadowDy="2"
+                    android:shadowRadius="5"/>
+
+                <TextView
+                    android:id="@+id/spec"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="start"
+                    android:text="@{spec}"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:shadowColor="@color/black"
+                    android:shadowDx="2"
+                    android:shadowDy="2"
+                    android:shadowRadius="5"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_toStartOf="@id/charIlvl"
+                android:layout_centerInParent="true"
+                android:layout_marginEnd="20dp">
+
+                <ImageView
+                    android:id="@+id/cov"
+                    android:src="@{cov}"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"/>
+
+                <TextView
+                    android:id="@+id/renown"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{renown}"
                     android:textColor="@color/white"
                     android:textSize="18sp"
                     android:shadowColor="@color/black"
@@ -116,35 +133,23 @@
                     android:shadowDy="2"
                     android:shadowRadius="5"
                     />
-
-                <LinearLayout
-                    android:id="@+id/info"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:layout_gravity="center">
-
-                    <ImageView
-                        android:id="@+id/cov"
-                        android:src="@{cov}"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"/>
-
-                    <TextView
-                        android:id="@+id/renown"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@{renown}"
-                        android:textColor="@color/white"
-                        android:textSize="18sp"
-                        android:shadowColor="@color/black"
-                        android:shadowDx="2"
-                        android:shadowDy="2"
-                        android:shadowRadius="5"
-                        />
-                </LinearLayout>
             </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/charIlvl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{ilvl}"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:shadowColor="@color/black"
+                android:shadowDx="2"
+                android:shadowDy="2"
+                android:shadowRadius="5"
+                android:layout_alignParentEnd="true"
+                android:layout_centerInParent="true"
+                android:layout_marginEnd="10dp"/>
 
         </RelativeLayout>
     </com.google.android.material.card.MaterialCardView>

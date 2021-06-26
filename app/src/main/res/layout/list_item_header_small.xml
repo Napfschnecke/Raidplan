@@ -6,21 +6,16 @@
         <variable
             name="title"
             type="String" />
-
-        <variable
-            name="color"
-            type="Integer" />
     </data>
 
     <TextView
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:gravity="start"
         android:text="@{title}"
-        android:textColor="@{context.getColor(color)}"
-        android:textSize="14sp"
-        android:paddingBottom="15dp"
-        android:textStyle="italic"/>
+        android:textColor="@color/colorAccent"
+        android:textSize="16sp"
+        android:paddingBottom="5dp"/>
 
 </layout>

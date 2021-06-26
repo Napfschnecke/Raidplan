@@ -7,6 +7,7 @@ import com.airbnb.mvrx.MvRxState
 import com.airbnb.mvrx.withState
 import com.raidplan.ui.AdvancedFragment
 import com.raidplan.ui.BaseFragment
+import com.raidplan.ui.SliderFragment
 import com.raidplan.ui.ZoomFragment
 
 /**
@@ -40,6 +41,20 @@ fun BaseFragment.simpleController(
  * When models are built the current state of the viewmodel will be provided.
  */
 fun <S : MvRxState, A : MvRxViewModel<S>> BaseFragment.simpleController(
+    viewModel: A,
+    buildModels: EpoxyController.(state: S) -> Unit
+) = MvRxEpoxyController {
+    if (view == null || isRemoving) return@MvRxEpoxyController
+    withState(viewModel) { state ->
+        buildModels(state)
+    }
+}
+
+/**
+ * Create a [MvRxEpoxyController] that builds models with the given callback.
+ * When models are built the current state of the viewmodel will be provided.
+ */
+fun <S : MvRxState, A : MvRxViewModel<S>> SliderFragment.simpleController(
     viewModel: A,
     buildModels: EpoxyController.(state: S) -> Unit
 ) = MvRxEpoxyController {
