@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="@dimen/nav_header_height"
     android:background="@color/colorAccentMuted"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    android:orientation="horizontal">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -21,12 +23,24 @@
 
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/charAsset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:contentDescription="characterImage"
+        android:layout_centerInParent="true"
+        android:scaleX="1.5"
+        android:scaleY="1.5"/>
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:gravity="center_horizontal|center_vertical"
         android:layout_gravity="center_horizontal"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="5dp">
 
         <TextView
             android:id="@+id/playerName"
@@ -55,15 +69,6 @@
             android:layout_height="wrap_content"
             android:textColor="@color/colorAccent" />
 
-        <!--
-        <TextView
-            android:id="@+id/battletag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:textStyle="bold"
-            android:drawableStart="@drawable/ic_bnet_32"/>
-        /-->
     </LinearLayout>
 
     <View
@@ -71,4 +76,4 @@
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="@color/colorAccent"/>
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</RelativeLayout>

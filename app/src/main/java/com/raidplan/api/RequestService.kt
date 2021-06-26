@@ -83,4 +83,13 @@ interface RequestService {
         @Query("locale") locale: String,
         @Query("access_token") token: String
     ): Call<JsonObject>
+
+    @GET("/profile/wow/character/{realmSlug}/{characterName}/character-media")
+    fun getCharImage(
+        @Path("realmSlug") realmSlug: String,
+        @Path("characterName") name: String,
+        @Query(":region") region: String,
+        @Query("namespace") namespace: String,
+        @Query("access_token") token: String
+    ): Call<JsonObject>
 }

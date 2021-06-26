@@ -9,10 +9,10 @@ import com.raidplan.areaSwitch
 import com.raidplan.areaSwitchKel
 import com.raidplan.data.Bosses
 import com.raidplan.roleBlob
-import com.raidplan.singleCheck
 import com.raidplan.util.MvRxViewModel
 import com.raidplan.util.simpleController
 import kotlinx.android.parcel.Parcelize
+
 
 @Parcelize
 data class RaidPosArgs(val boss: String? = "") : Parcelable

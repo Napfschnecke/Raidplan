@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
@@ -23,6 +24,8 @@ import com.raidplan.ui.AuthFragmentMvrx
 import com.raidplan.ui.CharPickerFragment
 import com.raidplan.ui.GuildFragmentMvrx
 import com.raidplan.ui.RaidPosMvrx
+import com.raidplan.util.PlanGlide
+import com.raidplan.util.ScreenshotExporter
 import io.realm.Realm
 import io.realm.RealmConfiguration
 
@@ -33,6 +36,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navView: NavigationView
     var user: User? = null
+    var boss: String? = null
+    private var menu: Menu? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,11 +78,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
         if (user == null) {
+            binding.toolbar.title = resources.getString(R.string.authorize)
             supportFragmentManager.beginTransaction()
                 .replace(R.id.host_fragment, AuthFragmentMvrx(), "auth").commit()
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
 
         } else if (user?.mainChar != null) {
+            updateToolbar(false)
             supportFragmentManager.beginTransaction()
                 .replace(R.id.host_fragment, GuildFragmentMvrx(), "guild").commit()
         } else {
@@ -90,6 +97,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
+        this.menu = menu
         menuInflater.inflate(R.menu.main, menu)
         return true
     }
@@ -100,14 +108,19 @@ class MainActivity : AppCompatActivity() {
     ) {
         runOnUiThread {
             if (toArrow) {
-                binding.toolbar.title = boss
+                binding.toolbar.title = resources.getString(R.string.app_name)
+                binding.toolbar.subtitle = boss
+                this.boss = boss
+                menu?.findItem(R.id.action_export)?.isVisible = true
                 binding.toolbar.navigationIcon = ResourcesCompat.getDrawable(
                     resources,
                     R.drawable.ic_baseline_arrow_back_24,
                     this.theme
                 )
             } else {
-                binding.toolbar.title = resources.getString(R.string.app_name)
+                menu?.findItem(R.id.action_export)?.isVisible = false
+                binding.toolbar.title = resources.getString(R.string.guild)
+                binding.toolbar.subtitle = user?.mainChar?.guild
                 binding.toolbar.navigationIcon =
                     ResourcesCompat.getDrawable(resources, R.drawable.ic_menu, this.theme)
             }
@@ -165,6 +178,7 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.host_fragment, GuildFragmentMvrx(), "guild").commit()
         updateUserVar()
+        updateToolbar(false)
     }
 
     fun showCharPicker() {
@@ -191,7 +205,19 @@ class MainActivity : AppCompatActivity() {
         header.findViewById<TextView>(R.id.playerGuild).text = "<${char.guild}>"
         header.findViewById<TextView>(R.id.playerRealm).text = "${char.server}"
         header.findViewById<TextView>(R.id.playerDetail).text =
-            "${Classes.getClassById("${char.playerClass}")}"
+            Classes.getClassById("${char.playerClass}")
+        val charView = header.findViewById<ImageView>(R.id.charAsset)
+
+        PlanGlide.with(this)
+            .load(char.rawUrl)
+            .error(
+                ResourcesCompat.getDrawable(
+                    resources,
+                    R.drawable.melee_blob_selected,
+                    theme
+                )
+            )
+            .into(charView)
     }
 
     private fun updateUserVar() {
@@ -212,6 +238,15 @@ class MainActivity : AppCompatActivity() {
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
 
         }
+    }
+
+    fun exportScreen(item: MenuItem) {
+        ScreenshotExporter().store(
+            ScreenshotExporter().getScreenShot(binding.hostFragment.findViewById(R.id.zoomcont)),
+            "plan.png",
+            this,
+            "${this.boss}"
+        )
     }
 
 }

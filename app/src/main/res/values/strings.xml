@@ -1,24 +1,12 @@
 <resources>
     <string name="app_name">Raidplan</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
+    <string name="action_export">Export Screenshot</string>
 
-    <string name="menu_home">Home</string>
-    <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
     <string name="set_character">Select a character in the guild you want.</string>
-    <string name="char_name">Name</string>
-    <string name="key_level">Key</string>
     <string name="setup">Synchronize your Account</string>
-
-    <string name="tanks">Tanks</string>
-    <string name="healer">Healer</string>
-    <string name="melee">Melee</string>
-    <string name="range">Range</string>
+    <string name="authorize">Authorize</string>
+    <string name="guild">Guild</string>
 
     <string name="longclick_to_add">Hold entry to add or remove from roster.</string>
 
@@ -33,12 +21,30 @@
     <string name="kelthuzad">Kel\'Thuzad</string>
     <string name="sylvanas">Sylvanas Windrunner</string>
 
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="char_name">Name</string>
+    <string name="key_level">Key</string>
+
+    <string name="tanks">Tanks</string>
+    <string name="healer">Healer</string>
+    <string name="melee">Melee</string>
+    <string name="range">Range</string>
+
+
     <string name="p1">Phase 1</string>
     <string name="chains1">Chains 1</string>
     <string name="chains2">Chains 2</string>
     <string name="p2">Phase 2</string>
     <string name="phylactery">Phylactery</string>
 
-    <string name="lock_zoom">Lock Zoom</string>
+    <string name="no_whatsapp">You need to install WhatsApp to use this function.</string>
 
 </resources>

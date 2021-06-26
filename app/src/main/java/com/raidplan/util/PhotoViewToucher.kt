@@ -80,8 +80,8 @@ class PhotoViewToucher(view: ImageView?, val context: Context, val rel: Relative
                 val lp = img.layoutParams as RelativeLayout.LayoutParams
                 imageMemory[selectedIcon - 1] = img
 
-                lp.leftMargin = x
-                lp.topMargin = y
+                lp.leftMargin = x - 18
+                lp.topMargin = y - 18
                 img.layoutParams = lp
                 true
             }

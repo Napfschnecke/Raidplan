@@ -22,7 +22,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/colorAccent"
-                app:navigationIcon="@drawable/ic_menu"/>
+                app:navigationIcon="@drawable/ic_menu"
+                app:titleTextAppearance="@style/Toolbar.TitleText"
+                app:subtitleTextAppearance="@style/Toolbar.SubtitleText"/>
 
         </com.google.android.material.appbar.AppBarLayout>
 

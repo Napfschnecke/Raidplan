@@ -30,6 +30,36 @@ class CharPicker {
                 }
             }
         }
+        val requestService = RequestGenerator.createService(
+            RequestService::class.java
+        )
+
+        val call = requestService.getCharImage(
+            "${char.server?.lowercase()}",
+            "${char.name?.lowercase()}",
+            "eu",
+            "profile-eu",
+            "${ApiData.AUTH_TOKEN}"
+        )
+
+        call.enqueue(object : Callback<JsonObject> {
+            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                val assets = response.body()?.get("assets")?.asJsonArray
+                val rawObj = assets?.get(3)?.asJsonObject
+                val rawUrl = rawObj?.get("value").toString()
+                Realm.getDefaultInstance().use {
+                    it.executeTransactionAsync { realm ->
+                        val ch = realm.where(Character::class.java).equalTo("name", char.name)
+                            .equalTo("server", char.server).findFirst()
+                        ch?.rawUrl = rawUrl.replace("\"", "")
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+
+            }
+        })
         retrieveGuildInfo(char, mainActivity)
 
     }

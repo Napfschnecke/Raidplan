@@ -19,7 +19,7 @@
         android:gravity="center"
         android:text="@{title}"
         android:textColor="@{context.getColor(color)}"
-        android:textSize="26sp"
+        android:textSize="22sp"
         android:paddingBottom="15dp"
         android:textStyle="italic"/>
 

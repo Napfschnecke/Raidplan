@@ -26,6 +26,7 @@ open class Character() : RealmObject(), Parcelable {
     var activeSpec: String? = null
     var role: String? = null
     var roster: Boolean = false
+    var rawUrl: String? = null
 
     var dungeonList: RealmList<Dungeon> = RealmList()
 
