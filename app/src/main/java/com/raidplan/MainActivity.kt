@@ -24,10 +24,7 @@ import com.raidplan.data.Classes
 import com.raidplan.data.OauthStrings
 import com.raidplan.data.User
 import com.raidplan.databinding.ActivityMainBinding
-import com.raidplan.ui.AuthFragmentMvrx
-import com.raidplan.ui.CharPickerFragment
-import com.raidplan.ui.GuildFragmentMvrx
-import com.raidplan.ui.RaidPosMvrx
+import com.raidplan.ui.*
 import com.raidplan.util.PlanGlide
 import com.raidplan.util.ScreenshotExporter
 import io.realm.Realm
@@ -61,6 +58,7 @@ class MainActivity : AppCompatActivity() {
 
         drawerLayout = binding.drawerLayout
         navView = binding.navView
+        navView.menu.getItem(0).isChecked = true
 
         Realm.getDefaultInstance().use { r ->
             r.executeTransaction { bgRealm ->
@@ -90,7 +88,7 @@ class MainActivity : AppCompatActivity() {
 
             }
             user?.mainChar != null -> {
-                updateToolbar(false)
+                updateToolbar(resources.getString(R.string.guild), "${user?.mainChar?.guild}")
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.host_fragment, GuildFragmentMvrx(), "guild").commit()
             }
@@ -108,31 +106,6 @@ class MainActivity : AppCompatActivity() {
         this.menu = menu
         menuInflater.inflate(R.menu.main, menu)
         return true
-    }
-
-    fun updateToolbar(
-        toArrow: Boolean = false,
-        boss: String = ""
-    ) {
-        runOnUiThread {
-            if (toArrow) {
-                binding.toolbar.title = resources.getString(R.string.app_name)
-                binding.toolbar.subtitle = boss
-                this.boss = boss
-                menu?.findItem(R.id.action_export)?.isVisible = true
-                binding.toolbar.navigationIcon = ResourcesCompat.getDrawable(
-                    resources,
-                    R.drawable.ic_baseline_arrow_back_24,
-                    this.theme
-                )
-            } else {
-                menu?.findItem(R.id.action_export)?.isVisible = false
-                binding.toolbar.title = resources.getString(R.string.guild)
-                binding.toolbar.subtitle = user?.mainChar?.guild
-                binding.toolbar.navigationIcon =
-                    ResourcesCompat.getDrawable(resources, R.drawable.ic_menu, this.theme)
-            }
-        }
     }
 
     override fun onResume() {
@@ -160,8 +133,21 @@ class MainActivity : AppCompatActivity() {
         val currentFragment = supportFragmentManager.findFragmentById(R.id.host_fragment)
         currentFragment?.let {
             when (it::class) {
-                RaidPosMvrx::class -> updateToolbar(true, "$boss")
-                GuildFragmentMvrx::class -> updateToolbar(false)
+                RaidPosMvrx::class -> {
+                    updateToolbar(
+                        resources.getString(R.string.app_name),
+                        "$boss",
+                        true
+                    )
+                    navView.menu.getItem(2).isChecked = true
+                }
+                GuildFragmentMvrx::class -> {
+                    updateToolbar(
+                        resources.getString(R.string.guild),
+                        "${user?.mainChar?.guild}"
+                    )
+                    navView.menu.getItem(0).isChecked = true
+                }
             }
         }
     }
@@ -169,12 +155,27 @@ class MainActivity : AppCompatActivity() {
     override fun onBackPressed() {
         val currentFragment = supportFragmentManager.findFragmentById(R.id.host_fragment)
         currentFragment?.let {
-            if (it::class == RaidPosMvrx::class) {
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.host_fragment, GuildFragmentMvrx(), "guild").commit()
-                updateToolbar(false)
-            } else {
-                drawerLayout.openDrawer(GravityCompat.START)
+            when (it::class) {
+                RaidPosMvrx::class -> {
+                    supportFragmentManager.beginTransaction().apply {
+                        setCustomAnimations(
+                            R.anim.enter_from_left,
+                            R.anim.exit_to_right,
+                            R.anim.enter_from_left,
+                            R.anim.exit_to_right
+                        ).replace(
+                            R.id.host_fragment,
+                            BossPickerFragment(),
+                            "boss"
+                        ).commit()
+                    }
+
+                    updateToolbar(
+                        resources.getString(R.string.bosses),
+                        resources.getString(R.string.pick_boss)
+                    )
+                }
+                else -> drawerLayout.openDrawer(GravityCompat.START)
             }
         }
     }
@@ -196,7 +197,6 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.host_fragment, GuildFragmentMvrx(), "guild").commit()
         updateUserVar()
-        updateToolbar(false)
     }
 
     fun showCharPicker() {
@@ -204,12 +204,84 @@ class MainActivity : AppCompatActivity() {
             .replace(R.id.host_fragment, CharPickerFragment(), "chars").commit()
     }
 
-    fun openRaidPositioner(item: MenuItem) {
-        updateToolbar(true, item.title.toString())
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.host_fragment, RaidPosMvrx.newInstance("${item.title}"), "raidPos")
-            .commit()
+    fun openRaidPositioner(boss: String) {
+        updateToolbar(
+            resources.getString(R.string.app_name),
+            boss,
+            showExport = true,
+            switchNav = true
+        )
+        supportFragmentManager.beginTransaction().apply {
+            setCustomAnimations(
+                R.anim.enter_from_right,
+                R.anim.exit_to_left,
+                R.anim.enter_from_left,
+                R.anim.exit_to_right
+            ).replace(R.id.host_fragment, RaidPosMvrx.newInstance(boss), "raidPos")
+                .commit()
+        }
+    }
+
+    fun openFragment(item: MenuItem) {
+        when (item.title) {
+            resources.getString(R.string.nav_guild) -> {
+                supportFragmentManager.beginTransaction().apply {
+                    setCustomAnimations(
+                        R.anim.enter_from_right,
+                        R.anim.exit_to_left,
+                        R.anim.enter_from_left,
+                        R.anim.exit_to_right
+                    ).replace(R.id.host_fragment, GuildFragmentMvrx(), "guild")
+                        .commit()
+                }
+                updateToolbar(resources.getString(R.string.guild), "${user?.mainChar?.guild}")
+            }
+            resources.getString(R.string.nav_roster) -> {
+
+            }
+            resources.getString(R.string.nav_raid) -> {
+                supportFragmentManager.beginTransaction().apply {
+                    setCustomAnimations(
+                        R.anim.enter_from_right,
+                        R.anim.exit_to_left,
+                        R.anim.enter_from_left,
+                        R.anim.exit_to_right
+                    ).replace(R.id.host_fragment, BossPickerFragment(), "boss")
+                        .commit()
+                }
+                updateToolbar(
+                    resources.getString(R.string.bosses),
+                    resources.getString(R.string.pick_boss)
+                )
+            }
+        }
         drawerLayout.closeDrawer(GravityCompat.START)
+    }
+
+    fun updateToolbar(
+        title: String = "",
+        subtitle: String = "",
+        showExport: Boolean = false,
+        switchNav: Boolean = false
+    ) {
+        runOnUiThread {
+            menu?.findItem(R.id.action_export)?.isVisible = showExport
+            binding.toolbar.title = title
+            binding.toolbar.subtitle = subtitle
+            if (switchNav) {
+                binding.toolbar.navigationIcon = ResourcesCompat.getDrawable(
+                    resources,
+                    R.drawable.ic_baseline_arrow_back_24,
+                    theme
+                )
+            } else {
+                binding.toolbar.navigationIcon = ResourcesCompat.getDrawable(
+                    resources,
+                    R.drawable.ic_menu,
+                    theme
+                )
+            }
+        }
     }
 
     fun setCharacter(v: View) {

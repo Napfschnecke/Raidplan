@@ -103,10 +103,10 @@ open class Classes {
 
         fun getCovenantIcon(cov: String?): Int {
             return when (cov) {
-                "Night Fae" -> R.drawable.nightfae
-                "Venthyr" -> R.drawable.ventyhr
-                "Necrolord" -> R.drawable.necro
-                "Kyrian" -> R.drawable.kyrian
+                "Night Fae" -> R.drawable.nightfae_2
+                "Venthyr" -> R.drawable.venthyr_2
+                "Necrolord" -> R.drawable.necro_2
+                "Kyrian" -> R.drawable.kyrian_2
                 else -> R.drawable.nightfae
             }
         }

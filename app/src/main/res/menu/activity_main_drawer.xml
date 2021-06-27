@@ -3,44 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_tar"
-            android:onClick="openRaidPositioner"
-            android:title="@string/tarragrue" />
+            android:id="@+id/nav_guild"
+            android:onClick="openFragment"
+            android:icon="@drawable/ic_baseline_house_24"
+            android:title="@string/nav_guild" />
         <item
-            android:id="@+id/nav_eye"
-            android:onClick="openRaidPositioner"
-            android:title="@string/eye" />
+            android:id="@+id/nav_roster"
+            android:onClick="openFragment"
+            android:icon="@drawable/ic_baseline_format_list_numbered_24"
+            android:title="@string/nav_roster" />
         <item
-            android:id="@+id/nav_nine"
-            android:onClick="openRaidPositioner"
-            android:title="@string/nine" />
-        <item
-            android:id="@+id/nav_remnant"
-            android:onClick="openRaidPositioner"
-            android:title="@string/remnant" />
-        <item
-            android:id="@+id/nav_soulrender"
-            android:onClick="openRaidPositioner"
-            android:title="@string/soulrender" />
-        <item
-            android:id="@+id/nav_painsmith"
-            android:onClick="openRaidPositioner"
-            android:title="@string/painsmith" />
-        <item
-            android:id="@+id/nav_guardian"
-            android:onClick="openRaidPositioner"
-            android:title="@string/guardian" />
-        <item
-            android:id="@+id/nav_fatescribe"
-            android:onClick="openRaidPositioner"
-            android:title="@string/fatescribe" />
-        <item
-            android:id="@+id/nav_kelthuzad"
-            android:onClick="openRaidPositioner"
-            android:title="@string/kelthuzad" />
-        <item
-            android:id="@+id/nav_sylvanas"
-            android:onClick="openRaidPositioner"
-            android:title="@string/sylvanas" />
+            android:id="@+id/nav_raid"
+            android:onClick="openFragment"
+            android:icon="@drawable/ic_baseline_add_location_alt_24"
+            android:title="@string/nav_raid" />
     </group>
 </menu>

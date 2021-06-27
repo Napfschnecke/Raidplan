@@ -7,9 +7,15 @@
     <string name="setup">Synchronize your Account</string>
     <string name="authorize">Authorize</string>
     <string name="guild">Guild</string>
+    <string name="bosses">Bosses</string>
+    <string name="pick_boss">Pick a Boss</string>
 
     <string name="longclick_to_add">Hold entry to add or remove from roster.</string>
     <string name="rank_slider">Minimum guildrank to show:</string>
+
+    <string name="nav_guild">Your Guild</string>
+    <string name="nav_roster">Build a Roster</string>
+    <string name="nav_raid">Raidposition Tool</string>
 
     <string name="tarragrue">The Tarragrue</string>
     <string name="eye">The Eye of the Jailer</string>

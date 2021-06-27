@@ -47,7 +47,7 @@
         android:fitsSystemWindows="true"
         android:background="@color/black"
         app:headerLayout="@layout/nav_header_main"
-        app:itemTextColor="@color/white"
+        app:itemTextColor="@color/nav_highlight"
         app:menu="@menu/activity_main_drawer">
 
     </com.google.android.material.navigation.NavigationView>
