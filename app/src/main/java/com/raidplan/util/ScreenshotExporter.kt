@@ -30,7 +30,7 @@ class ScreenshotExporter {
         return bitmap
     }
 
-    fun store(bm: Bitmap, fileName: String, context: Context, boss: String) {
+    fun store(bm: Bitmap, fileName: String, context: Context, boss: String = "", roster: Boolean) {
         val dirPath = Environment.getExternalStorageDirectory().absolutePath + "/Pictures/Raidplans"
         val dir = File(dirPath)
         if (!dir.exists()) dir.mkdirs()
@@ -45,15 +45,23 @@ class ScreenshotExporter {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        sendImage(context, boss)
+        sendImage(context, fileName, boss, roster)
     }
 
-    private fun sendImage(context: Context, boss: String) {
-        val uri = Uri.parse("/storage/emulated/0/Pictures/Raidplans/plan.png")
+    private fun sendImage(context: Context, fileName: String, boss: String, roster: Boolean) {
+        val uri = if (roster) {
+            Uri.parse("/storage/emulated/0/Pictures/Raidplans/roster.png")
+        } else {
+            Uri.parse("/storage/emulated/0/Pictures/Raidplans/${fileName}")
+        }
         val sharingIntent = Intent(Intent.ACTION_SEND)
         sharingIntent.type = "text/plain"
         sharingIntent.`package` = "com.whatsapp"
-        sharingIntent.putExtra(Intent.EXTRA_TEXT, "Raidposition $boss")
+        if (roster) {
+            sharingIntent.putExtra(Intent.EXTRA_TEXT, "")
+        } else {
+            sharingIntent.putExtra(Intent.EXTRA_TEXT, "Raidposition $boss")
+        }
         sharingIntent.putExtra(Intent.EXTRA_STREAM, uri)
         sharingIntent.type = "image/png"
         sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)

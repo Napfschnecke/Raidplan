@@ -173,7 +173,7 @@ open class DataCrawler {
         /**
          * retrieve accountinfo (id and battletag)
          */
-        fun getAccountInfo(act: MainActivity, snackbar: Snackbar) {
+        fun getAccountInfo(act: MainActivity) {
             val accountService = TokenGenerator.createService(
                 TokenService::class.java
             )
@@ -198,7 +198,7 @@ open class DataCrawler {
                                 }
                             }
                         }
-                        getAllCharacters(act, snackbar)
+                        getAllCharacters(act)
                         //getGuildMembers(act)
                     }
                 }
@@ -212,7 +212,7 @@ open class DataCrawler {
         /**
          * retrieve a list of all characters on the account
          */
-        fun getAllCharacters(act: MainActivity, snackbar: Snackbar) {
+        fun getAllCharacters(act: MainActivity) {
 
             val call = requestService.getCharacters(
                 "profile-eu",
@@ -293,7 +293,6 @@ open class DataCrawler {
                             }
                         }
                     }
-                    snackbar.dismiss()
                     act.showCharPicker()
 
                 }
@@ -367,7 +366,10 @@ open class DataCrawler {
                                     g?.roster?.add(c)
                                 }
                             }
-                            getGuildRosterData(r.copyFromRealm(g?.roster))
+                            g?.let { gg ->
+                                val gu = r.copyFromRealm(gg)
+                                getGuildRosterData(gu.roster)
+                            }
                         }
                     }
                 }

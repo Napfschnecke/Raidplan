@@ -2,7 +2,6 @@ package com.raidplan.data
 
 import android.os.Parcel
 import android.os.Parcelable
-import com.raidplan.data.Dungeon
 import io.realm.RealmList
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
@@ -27,8 +26,22 @@ open class Character() : RealmObject(), Parcelable {
     var role: String? = null
     var roster: Boolean = false
     var rawUrl: String? = null
+    var bench: Boolean = false
 
     var dungeonList: RealmList<Dungeon> = RealmList()
+
+    open fun getRoleId(): Int {
+        if (bench) {
+            return 4
+        }
+        return when (role) {
+            "Tank" -> 0
+            "Healer" -> 1
+            "Melee" -> 2
+            "Range" -> 3
+            else -> 4
+        }
+    }
 
     open fun getRepTier(tier: Int): String {
         return when (tier) {

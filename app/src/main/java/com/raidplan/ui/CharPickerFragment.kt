@@ -3,13 +3,13 @@ package com.raidplan.ui
 import android.view.View
 import com.airbnb.mvrx.MvRxState
 import com.airbnb.mvrx.fragmentViewModel
+import com.google.android.material.snackbar.Snackbar
 import com.raidplan.MainActivity
 import com.raidplan.R
+import com.raidplan.chars
 import com.raidplan.data.Character
 import com.raidplan.data.Classes
-import com.raidplan.data.Guild
 import com.raidplan.data.User
-import com.raidplan.chars
 import com.raidplan.header
 import com.raidplan.util.CharPicker
 import com.raidplan.util.MvRxViewModel
@@ -77,7 +77,21 @@ class CharPickerFragment : BaseFragment() {
                 server(char.server)
                 color(Classes.getClassColor(char.playerClass))
                 onClick(View.OnClickListener {
-                    CharPicker().persistMainChar(char, activity as MainActivity)
+                    val act = activity as MainActivity
+                    CharPicker().persistMainChar(char, act)
+                    Snackbar.make(
+                        it,
+                        resources.getString(R.string.setting_character),
+                        Snackbar.LENGTH_LONG
+                    ).apply {
+                        val lay = view as Snackbar.SnackbarLayout
+                        val cLay = act.layoutInflater.inflate(R.layout.snackbar_progress, null)
+                        lay.addView(cLay)
+
+                        setBackgroundTint(act.resources.getColor(R.color.colorAccent))
+                        setTextColor(act.resources.getColor(R.color.black))
+                        show()
+                    }
                 })
             }
         }

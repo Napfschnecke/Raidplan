@@ -21,4 +21,8 @@
     <color name="legendary">#FFC107</color>
     <color name="colorAccent">#AACDCD</color>
     <color name="colorAccentMuted">#5B7575</color>
+    <color name="lightGray">#808080</color>
+    <color name="darkerGray">#ff3C4043</color>
+    <color name="comfyGreen">#18F600</color>
+
 </resources>

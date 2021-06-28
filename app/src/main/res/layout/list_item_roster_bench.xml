@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="title"
+            type="String" />
+
+        <variable
+            name="role"
+            type="android.graphics.drawable.Drawable" />
+
+        <variable
+            name="color"
+            type="android.graphics.drawable.Drawable" />
+
+        <variable
+            name="onClick"
+            type="android.view.View.OnClickListener" />
+
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="3dp"
+            app:cardCornerRadius="3dp"
+            android:layout_centerInParent="true"
+            android:onClick="@{onClick}"
+            android:background="@{color}"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/roleicon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@{role}"
+                    android:layout_gravity="center_vertical"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerInParent="true"
+                    android:contentDescription="RoleIcon"
+                    app:tint="@color/black"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"/>
+
+                <TextView
+                    android:id="@+id/boss"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_toEndOf="@id/roleicon"
+                    android:gravity="center"
+                    android:text="@{title}"
+                    android:background="@drawable/bench"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:shadowColor="@color/black"
+                    android:shadowDx="2"
+                    android:shadowDy="2"
+                    android:shadowRadius="5"/>
+            </RelativeLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+    </RelativeLayout>
+</layout>

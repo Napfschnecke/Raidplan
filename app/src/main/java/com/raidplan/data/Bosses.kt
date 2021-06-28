@@ -21,6 +21,23 @@ open class Bosses {
             }
         }
 
+        fun getBossImageById(id: Int): Int {
+
+            return when (id) {
+                0 -> R.drawable.tarragrue_image
+                1 -> R.drawable.eye_image
+                2 -> R.drawable.nine_image
+                3 -> R.drawable.remnant_image
+                4 -> R.drawable.soulrender_image
+                5 -> R.drawable.painsmith_image
+                6 -> R.drawable.guardian_image
+                7 -> R.drawable.fatescribe_image
+                8 -> R.drawable.kelthuzad_image
+                9 -> R.drawable.sylvanas_image
+                else -> R.drawable.tarragrue_image
+            }
+        }
+
         fun getAreaByName(name: String): Int {
 
             return when (name) {

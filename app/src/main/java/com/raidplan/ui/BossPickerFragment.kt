@@ -1,9 +1,10 @@
 package com.raidplan.ui
 
+import androidx.core.content.res.ResourcesCompat
 import com.airbnb.mvrx.MvRxState
 import com.airbnb.mvrx.fragmentViewModel
 import com.raidplan.MainActivity
-import com.raidplan.boss
+import com.raidplan.bossImage
 import com.raidplan.data.Bosses
 import com.raidplan.util.MvRxViewModel
 import com.raidplan.util.simpleController
@@ -35,9 +36,16 @@ class BossPickerFragment : BaseFragment(3) {
                     lengthSinceBreak = 0
                 }
             }
-            boss {
+            bossImage {
                 id(i)
                 title(bossNameFormatted)
+                img(
+                    ResourcesCompat.getDrawable(
+                        resources,
+                        Bosses.getBossImageById(i),
+                        context?.theme
+                    )
+                )
                 onClick { v ->
                     (activity as MainActivity).openRaidPositioner(bossName)
                 }

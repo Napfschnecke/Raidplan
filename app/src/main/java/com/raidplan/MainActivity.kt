@@ -16,13 +16,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.navigation.ui.AppBarConfiguration
 import com.google.android.material.navigation.NavigationView
 import com.raidplan.api.ApiData
-import com.raidplan.data.Character
-import com.raidplan.data.Classes
-import com.raidplan.data.OauthStrings
-import com.raidplan.data.User
+import com.raidplan.data.*
 import com.raidplan.databinding.ActivityMainBinding
 import com.raidplan.ui.*
 import com.raidplan.util.PlanGlide
@@ -32,13 +28,13 @@ import io.realm.RealmConfiguration
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navView: NavigationView
     var user: User? = null
     var boss: String? = null
     private var menu: Menu? = null
+    private var reauthorize = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,6 +65,13 @@ class MainActivity : AppCompatActivity() {
                     ApiData.AUTH_CODE = oauth.authCode
                     ApiData.AUTH_TOKEN = oauth.authToken
                     ApiData.AUTH_EXPIRATON = oauth.authExpiration
+                }
+                if (ApiData.AUTH_EXPIRATON != 0L && System.currentTimeMillis() > ApiData.AUTH_EXPIRATON) {
+                    reauthorize = true
+                    binding.toolbar.title = resources.getString(R.string.authorize)
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.host_fragment, AuthFragmentMvrx(), "auth").commit()
+                    drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 }
                 bgRealm.where(User::class.java).findFirst()?.let { u ->
                     val unmanaged = bgRealm.copyFromRealm(u)
@@ -111,7 +114,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         val uri = intent.data
-        if (user == null) {
+        if (user == null || reauthorize) {
             uri?.let {
                 if (it.toString().startsWith(ApiData.REDIRECT_URI)) {
                     val code = it.getQueryParameter("code")
@@ -125,7 +128,7 @@ class MainActivity : AppCompatActivity() {
                             }
                         }
                         ApiData.AUTH_CODE = code
-                        ApiData.getAuthToken(this)
+                        ApiData.getAuthToken(this, reauthorize)
                     }
                 }
             }
@@ -205,6 +208,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun openRaidPositioner(boss: String) {
+        this.boss = boss
         updateToolbar(
             resources.getString(R.string.app_name),
             boss,
@@ -223,36 +227,88 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun openFragment(item: MenuItem) {
+        val currentFragment = supportFragmentManager.findFragmentById(R.id.host_fragment)
+
         when (item.title) {
             resources.getString(R.string.nav_guild) -> {
-                supportFragmentManager.beginTransaction().apply {
-                    setCustomAnimations(
-                        R.anim.enter_from_right,
-                        R.anim.exit_to_left,
-                        R.anim.enter_from_left,
-                        R.anim.exit_to_right
-                    ).replace(R.id.host_fragment, GuildFragmentMvrx(), "guild")
-                        .commit()
+                currentFragment?.let { frag ->
+                    if (frag::class != GuildFragmentMvrx::class) {
+                        supportFragmentManager.beginTransaction().apply {
+                            setCustomAnimations(
+                                R.anim.enter_from_right,
+                                R.anim.exit_to_left,
+                                R.anim.enter_from_left,
+                                R.anim.exit_to_right
+                            ).replace(R.id.host_fragment, GuildFragmentMvrx(), "guild")
+                                .commit()
+                        }
+                        updateToolbar(
+                            resources.getString(R.string.guild),
+                            "${user?.mainChar?.guild}"
+                        )
+                    }
                 }
-                updateToolbar(resources.getString(R.string.guild), "${user?.mainChar?.guild}")
             }
             resources.getString(R.string.nav_roster) -> {
+                currentFragment?.let { frag ->
+                    if (frag::class != RosterPickerFragment::class) {
+                        val gn = user?.mainChar?.guild
+                        var uRoster = mutableListOf<Character>()
+                        Realm.getDefaultInstance().use { r ->
+                            r.executeTransaction { bgRealm ->
+                                val guild =
+                                    bgRealm.where(Guild::class.java).equalTo("name", gn)
+                                        .findFirst()
 
+                                val roster = guild?.roster
+                                roster?.let { ro ->
+                                    uRoster = bgRealm.copyFromRealm(ro.toMutableList())
+                                }
+                            }
+                        }
+                        user?.let { u ->
+                            val arrayMember = arrayListOf<Character>()
+                            arrayMember.addAll(uRoster.filter { it.guildRank <= u.rankPref })
+                            supportFragmentManager.beginTransaction().apply {
+                                setCustomAnimations(
+                                    R.anim.enter_from_right,
+                                    R.anim.exit_to_left,
+                                    R.anim.enter_from_left,
+                                    R.anim.exit_to_right
+                                ).replace(
+                                    R.id.host_fragment,
+                                    RosterPickerFragment.newInstance(arrayMember),
+                                    "roster"
+                                )
+                                    .commit()
+                            }
+                        }
+                        updateToolbar(
+                            resources.getString(R.string.roster),
+                            resources.getString(R.string.nav_roster),
+                            showExport = true,
+                        )
+                    }
+                }
             }
             resources.getString(R.string.nav_raid) -> {
-                supportFragmentManager.beginTransaction().apply {
-                    setCustomAnimations(
-                        R.anim.enter_from_right,
-                        R.anim.exit_to_left,
-                        R.anim.enter_from_left,
-                        R.anim.exit_to_right
-                    ).replace(R.id.host_fragment, BossPickerFragment(), "boss")
-                        .commit()
+                currentFragment?.let { frag ->
+                    if (frag::class != BossPickerFragment::class) {
+                        supportFragmentManager.beginTransaction().apply {
+                            setCustomAnimations(
+                                R.anim.enter_from_right,
+                                R.anim.exit_to_left,
+                                R.anim.enter_from_left,
+                                R.anim.exit_to_right
+                            ).replace(R.id.host_fragment, BossPickerFragment(), "boss")
+                                .commit()
+                        }
+                        updateToolbar(
+                            resources.getString(R.string.bosses),
+                            resources.getString(R.string.pick_boss)
+                        )
+                    }
                 }
-                updateToolbar(
-                    resources.getString(R.string.bosses),
-                    resources.getString(R.string.pick_boss)
-                )
             }
         }
         drawerLayout.closeDrawer(GravityCompat.START)
@@ -265,6 +321,9 @@ class MainActivity : AppCompatActivity() {
         switchNav: Boolean = false
     ) {
         runOnUiThread {
+            binding.toolbar.setSubtitleTextColor(
+                ResourcesCompat.getColor(resources, R.color.darkerGray, theme)
+            )
             menu?.findItem(R.id.action_export)?.isVisible = showExport
             binding.toolbar.title = title
             binding.toolbar.subtitle = subtitle
@@ -331,19 +390,42 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun exportScreen(item: MenuItem) {
+        val currentFragment = supportFragmentManager.findFragmentById(R.id.host_fragment)
+
         val permission =
             ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
         val permitted = (permission == PackageManager.PERMISSION_GRANTED)
         if (permitted) {
-            /*
-        ScreenshotExporter().store(
-            ScreenshotExporter().getScreenShot(binding.hostFragment.findViewById(R.id.zoomcont)),
-            "plan.png",
-            this,
-            "${this.boss}"
-        )
-         */
+            currentFragment?.let {
+                when (it::class) {
+                    RaidPosMvrx::class -> {
+                        ScreenshotExporter().store(
+                            ScreenshotExporter().getScreenShot(
+                                binding.hostFragment.findViewById(
+                                    R.id.zoomcont
+                                )
+                            ),
+                            "plan_${this.boss?.replace(" ", "")}.png",
+                            this,
+                            "${this.boss}",
+                            false
+                        )
+                    }
+                    RosterPickerFragment::class -> {
+                        ScreenshotExporter().store(
+                            ScreenshotExporter().getScreenShot(
+                                binding.hostFragment.findViewById(
+                                    R.id.recycler_view
+                                )
+                            ),
+                            "roster.png",
+                            this,
+                            roster = true
+                        )
+                    }
+                }
+            }
         } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 69)
@@ -359,16 +441,56 @@ class MainActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 69) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                println("permission manually granted")
-                ScreenshotExporter().store(
-                    ScreenshotExporter().getScreenShot(binding.hostFragment.findViewById(R.id.zoomcont)),
-                    "plan.png",
-                    this,
-                    "${this.boss}"
-                )
-            } else {
-                println("unlucky")
+                val currentFragment =
+                    supportFragmentManager.findFragmentById(R.id.host_fragment)
+                currentFragment?.let {
+                    when (it::class) {
+                        RaidPosMvrx::class -> {
+                            ScreenshotExporter().store(
+                                ScreenshotExporter().getScreenShot(
+                                    binding.hostFragment.findViewById(
+                                        R.id.zoomcont
+                                    )
+                                ),
+                                "plan_${this.boss?.replace(" ", "")}.png",
+                                this,
+                                "${this.boss}",
+                                false
+                            )
+                        }
+                        RosterPickerFragment::class -> {
+                            ScreenshotExporter().store(
+                                ScreenshotExporter().getScreenShot(
+                                    binding.hostFragment.findViewById(
+                                        R.id.recycler_view
+                                    )
+                                ),
+                                "roster.png",
+                                this,
+                                roster = true
+                            )
+                        }
+                    }
+                }
             }
+        }
+    }
+
+    fun updateRosterToolbar(roster: ArrayList<Character>) {
+        binding.toolbar.title = title
+        binding.toolbar.subtitle = if (roster.size == 0) {
+            resources.getString(R.string.nav_roster)
+        } else {
+            "${roster.filterNot { it.bench }.size}/20, Bench: ${roster.filter { it.bench }.size}"
+        }
+        if (roster.filterNot { it.bench }.size >= 20) {
+            binding.toolbar.setSubtitleTextColor(
+                ResourcesCompat.getColor(resources, R.color.comfyGreen, theme)
+            )
+        } else {
+            binding.toolbar.setSubtitleTextColor(
+                ResourcesCompat.getColor(resources, R.color.darkerGray, theme)
+            )
         }
     }
 }

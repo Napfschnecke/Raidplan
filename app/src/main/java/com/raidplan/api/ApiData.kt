@@ -23,7 +23,7 @@ class ApiData {
         var AUTH_TOKEN: String? = null
         var AUTH_EXPIRATON: Long = 0
 
-        fun getAuthToken(act: MainActivity) {
+        fun getAuthToken(act: MainActivity, reauth: Boolean) {
             val tokenService = TokenGenerator.createService(
                 TokenService::class.java,
                 CLIENT_ID,
@@ -35,10 +35,10 @@ class ApiData {
                 "authorization_code",
                 "$AUTH_CODE"
             )
-            val snackbar = Snackbar.make(
+            Snackbar.make(
                 act.findViewById(R.id.drawer_layout),
-                "Working..",
-                Snackbar.LENGTH_INDEFINITE
+                act.resources.getString(R.string.retrieving),
+                Snackbar.LENGTH_LONG
             ).apply {
                 val lay = view as Snackbar.SnackbarLayout
                 val cLay = act.layoutInflater.inflate(R.layout.snackbar_progress, null)
@@ -59,14 +59,14 @@ class ApiData {
                         realm.executeTransactionAsync { bgRealm ->
                             bgRealm.where(OauthStrings::class.java).findFirst()?.let { strings ->
                                 strings.authToken = response.body()?.access_token
-                                strings.authExpiration = System.currentTimeMillis() + 86400000
+                                strings.authExpiration = System.currentTimeMillis() + 5184000000
                             }
                         }
                     }
                     AUTH_TOKEN = "${response.body()?.access_token}"
-                    AUTH_EXPIRATON = System.currentTimeMillis() + 86400000
+                    AUTH_EXPIRATON = System.currentTimeMillis() + 5184000000
 
-                    DataCrawler.getAccountInfo(act, snackbar)
+                    if (!reauth) DataCrawler.getAccountInfo(act)
                 }
 
                 override fun onFailure(call: Call<AccessToken>, t: Throwable) {

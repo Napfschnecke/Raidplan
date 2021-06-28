@@ -9,6 +9,11 @@
     <string name="guild">Guild</string>
     <string name="bosses">Bosses</string>
     <string name="pick_boss">Pick a Boss</string>
+    <string name="roster">Roster</string>
+
+    <string name="retrieving">Retrieving Data…</string>
+    <string name="setting_character">Setting Character…</string>
+    <string name="choose_characters">Add Characters to your Roster.</string>
 
     <string name="longclick_to_add">Hold entry to add or remove from roster.</string>
     <string name="rank_slider">Minimum guildrank to show:</string>

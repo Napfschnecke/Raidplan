@@ -6,6 +6,7 @@ import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import com.airbnb.mvrx.MvRxState
 import com.airbnb.mvrx.fragmentViewModel
+import com.raidplan.MainActivity
 import com.raidplan.R
 import com.raidplan.data.Character
 import com.raidplan.data.Classes
@@ -61,7 +62,7 @@ class GuildViewModel(initialState: GuildState) : MvRxViewModel<GuildState>(initi
         }
     }
 
-    fun updateRank(value: Float) {
+    fun updateRank(value: Float, activity: MainActivity) {
         withState { state ->
             Realm.getDefaultInstance().use {
                 it.executeTransactionAsync { bgRealm ->
@@ -69,6 +70,9 @@ class GuildViewModel(initialState: GuildState) : MvRxViewModel<GuildState>(initi
                         bgRealm.where(User::class.java).equalTo("accountId", state.user?.accountId)
                             .findFirst()
                     u?.rankPref = value
+                    u?.let {
+                        activity.user = bgRealm.copyFromRealm(u)
+                    }
                 }
             }
         }
@@ -116,7 +120,7 @@ class GuildFragmentMvrx : SliderFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         slider.addOnChangeListener { s, value, fromUser ->
-            viewModel.updateRank(value)
+            viewModel.updateRank(value, activity as MainActivity)
             view.findViewById<TextView>(R.id.select_rank_value)?.text = value.toInt().toString()
         }
         super.onViewCreated(view, savedInstanceState)
