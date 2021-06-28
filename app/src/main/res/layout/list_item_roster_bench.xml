@@ -62,7 +62,7 @@
                     android:layout_toEndOf="@id/roleicon"
                     android:gravity="center"
                     android:text="@{title}"
-                    android:background="@drawable/bench"
+                    android:background="@drawable/bench2"
                     android:textColor="@color/white"
                     android:textSize="14sp"
                     android:shadowColor="@color/black"
