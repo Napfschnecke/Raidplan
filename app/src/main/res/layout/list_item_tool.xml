@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="onClick"
+            type="android.view.View.OnClickListener" />
+
+        <variable
+            name="icon"
+            type="android.graphics.drawable.Drawable" />
+
+        <variable
+            name="bg"
+            type="android.graphics.drawable.Drawable" />
+
+    </data>
+
+    <ImageView
+        android:id="@+id/tool"
+        android:text="@string/p1"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:src="@{icon}"
+        android:onClick="@{onClick}"
+        android:background="@{bg}"/>
+</layout>

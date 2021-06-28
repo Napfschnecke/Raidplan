@@ -2,13 +2,13 @@ package com.raidplan.ui
 
 import android.os.Bundle
 import android.os.Parcelable
+import androidx.core.content.res.ResourcesCompat
 import com.airbnb.mvrx.MvRx
 import com.airbnb.mvrx.MvRxState
 import com.airbnb.mvrx.fragmentViewModel
-import com.raidplan.areaSwitch
-import com.raidplan.areaSwitchKel
+import com.raidplan.*
 import com.raidplan.data.Bosses
-import com.raidplan.roleBlob
+import com.raidplan.data.Raidmarker
 import com.raidplan.util.MvRxViewModel
 import com.raidplan.util.simpleController
 import kotlinx.android.parcel.Parcelize
@@ -18,7 +18,13 @@ import kotlinx.android.parcel.Parcelize
 data class RaidPosArgs(val boss: String? = "") : Parcelable
 
 
-data class RaidPosState(val boss: String? = "", val phase: Int = 1, val selection: Int = 0) :
+data class RaidPosState(
+    val boss: String? = "",
+    val phase: Int = 1,
+    val selection: Int = 0,
+    val toolbar: Int = 0,
+    val marker: Int = -1
+) :
     MvRxState {
     constructor(args: RaidPosArgs) : this(args.boss)
 }
@@ -36,6 +42,20 @@ class RaidPosViewModel(initialState: RaidPosState) : MvRxViewModel<RaidPosState>
             copy(selection = sel)
         }
     }
+
+    fun switchMarker(sel: Int) {
+        setState {
+            copy(marker = sel)
+        }
+    }
+
+    fun switchToolbar(newPos: Int) {
+        setState {
+            copy(
+                toolbar = newPos
+            )
+        }
+    }
 }
 
 class RaidPosMvrx(boss: String) : ZoomFragment(boss) {
@@ -46,6 +66,12 @@ class RaidPosMvrx(boss: String) : ZoomFragment(boss) {
         selectedIcon = sel
         viewModel.switchSelection(sel)
         attacher.selectedIcon = sel
+    }
+
+    override fun setMarker(sel: Int) {
+        selectedMarker = sel
+        viewModel.switchMarker(sel - 1)
+        attacher.selectedMarker = sel
     }
 
     override fun updateImage(res: Int) {
@@ -111,35 +137,173 @@ class RaidPosMvrx(boss: String) : ZoomFragment(boss) {
                 }
             }
         }
+    }
 
-        roleBlob {
-            id("roles")
-            selectTank(false)
-            selectHeal(false)
-            selectMelee(false)
-            selectRange(false)
-            selectBoss(false)
-            when (state.selection) {
-                1 -> selectTank(true)
-                2 -> selectHeal(true)
-                3 -> selectMelee(true)
-                4 -> selectRange(true)
-                5 -> selectBoss(true)
+    override fun secondEpoxyController() = simpleController(viewModel) { state ->
+
+        tool {
+            id("arrowLeft")
+            icon(
+                ResourcesCompat.getDrawable(
+                    resources,
+                    R.drawable.ic_baseline_arrow_back_ios_24,
+                    context?.theme
+                )
+            )
+            onClick { v ->
+                when (state.toolbar) {
+                    0 -> viewModel.switchToolbar(2)
+                    else -> viewModel.switchToolbar(state.toolbar - 1)
+                }
             }
-            onClick1 { v ->
-                setSelection(1)
+        }
+
+        when (state.toolbar) {
+            0 -> {
+                drawview.setTouchBlock(true)
             }
-            onClick2 { v ->
-                setSelection(2)
+            1 -> {
+                for (i in 0..7) {
+                    tool {
+                        id("marker$i")
+                        icon(
+                            ResourcesCompat.getDrawable(
+                                resources,
+                                Raidmarker.raidmarkerById(i),
+                                context?.theme
+                            )
+                        )
+                        if (state.marker == i) {
+                            bg(
+                                ResourcesCompat.getDrawable(
+                                    resources,
+                                    R.drawable.rectangle_frame,
+                                    context?.theme
+                                )
+                            )
+                        }
+                        onClick { v ->
+                            drawview.setTouchBlock(true)
+                            setMarker(i + 1)
+                            setSelection(0)
+                        }
+                    }
+                }
+                tool {
+                    id("clearMarker")
+                    icon(
+                        ResourcesCompat.getDrawable(
+                            resources,
+                            R.drawable.ic_baseline_delete_24,
+                            context?.theme
+                        )
+                    )
+                    onClick { v ->
+                        attacher.clearIcons()
+                    }
+                }
+
             }
-            onClick3 { v ->
-                setSelection(3)
+            2 -> {
+                drawview.setTouchBlock(false)
+                tool {
+                    id("clear")
+                    icon(
+                        ResourcesCompat.getDrawable(
+                            resources,
+                            R.drawable.ic_baseline_delete_24,
+                            context?.theme
+                        )
+                    )
+                    onClick { v ->
+                        drawview.clearCanvas()
+                    }
+                }
+
+                tool {
+                    id("undo")
+                    icon(
+                        ResourcesCompat.getDrawable(
+                            resources,
+                            R.drawable.ic_baseline_undo_24,
+                            context?.theme
+                        )
+                    )
+                    onClick { v ->
+                        drawview.undo()
+                    }
+                }
+
+                tool {
+                    id("redo")
+                    icon(
+                        ResourcesCompat.getDrawable(
+                            resources,
+                            R.drawable.ic_baseline_redo_24,
+                            context?.theme
+                        )
+                    )
+                    onClick { v ->
+                        drawview.redo()
+                    }
+                }
+
+                tool {
+                    id("minusStroke")
+                    icon(
+                        ResourcesCompat.getDrawable(
+                            resources,
+                            R.drawable.ic_baseline_remove_24,
+                            context?.theme
+                        )
+                    )
+                    onClick { v ->
+                        drawview.setStrokeWidth(
+                            (drawview.getStrokeWidth() - 1.0f).coerceAtLeast(
+                                1.0f
+                            )
+                        )
+                        requestModelBuild()
+                    }
+                }
+
+                simpleText {
+                    id("strokeCurrent")
+                    stroke("${drawview.getStrokeWidth().toInt()}")
+                }
+
+                tool {
+                    id("plusStroke")
+                    icon(
+                        ResourcesCompat.getDrawable(
+                            resources,
+                            R.drawable.ic_baseline_add_24,
+                            context?.theme
+                        )
+                    )
+                    onClick { v ->
+                        drawview.setStrokeWidth((drawview.getStrokeWidth() + 1.0f))
+                        requestModelBuild()
+                    }
+                }
             }
-            onClick4 { v ->
-                setSelection(4)
-            }
-            onClick5 { v ->
-                setSelection(5)
+
+        }
+
+        tool {
+            id("arrowRight")
+            icon(
+                ResourcesCompat.getDrawable(
+                    resources,
+                    R.drawable.ic_baseline_arrow_forward_ios_24,
+                    context?.theme
+                )
+            )
+            onClick { v ->
+                when (state.toolbar) {
+                    2 -> viewModel.switchToolbar(0)
+                    else -> viewModel.switchToolbar(state.toolbar + 1)
+                }
             }
         }
     }
