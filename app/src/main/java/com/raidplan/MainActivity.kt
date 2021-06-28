@@ -178,6 +178,7 @@ class MainActivity : AppCompatActivity() {
                         resources.getString(R.string.pick_boss)
                     )
                 }
+                AuthFragmentMvrx::class -> return
                 else -> drawerLayout.openDrawer(GravityCompat.START)
             }
         }
@@ -362,7 +363,7 @@ class MainActivity : AppCompatActivity() {
             .error(
                 ResourcesCompat.getDrawable(
                     resources,
-                    R.drawable.melee_blob_selected,
+                    R.drawable.sylvanas_image,
                     theme
                 )
             )

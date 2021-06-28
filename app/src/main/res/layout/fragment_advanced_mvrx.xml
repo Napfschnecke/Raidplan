@@ -43,7 +43,9 @@
             android:layout_weight="2"
             android:layout_gravity="center_horizontal"
             app:itemSpacing="3dp"
-            android:scrollbarAlwaysDrawHorizontalTrack="true"/>
+            android:scrollbarSize="4dp"
+            android:scrollbars="horizontal"
+            android:scrollbarThumbHorizontal="@color/colorAccent"/>
 
     </LinearLayout>
 </FrameLayout>

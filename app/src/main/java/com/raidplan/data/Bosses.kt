@@ -32,7 +32,7 @@ open class Bosses {
                 5 -> R.drawable.painsmith_image
                 6 -> R.drawable.guardian_image
                 7 -> R.drawable.fatescribe_image
-                8 -> R.drawable.kelthuzad_image
+                8 -> R.drawable.kelthuzad_image_square
                 9 -> R.drawable.sylvanas_image
                 else -> R.drawable.tarragrue_image
             }

@@ -16,7 +16,7 @@ class BossPickerModel(initialState: BossPickerState) :
     MvRxViewModel<BossPickerState>(initialState) {
 }
 
-class BossPickerFragment : BaseFragment(3) {
+class BossPickerFragment : BaseFragment(2) {
 
     private val viewModel: BossPickerModel by fragmentViewModel()
 

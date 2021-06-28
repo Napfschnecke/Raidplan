@@ -54,17 +54,20 @@ abstract class SliderFragment(var grid: Int = 0, var refreshable: Boolean = true
             }
 
             slider = findViewById(R.id.slider)
+            var userRank = 0f
             Realm.getDefaultInstance().use {
-                it.executeTransactionAsync { bgRealm ->
+                it.executeTransaction { bgRealm ->
                     val u =
                         bgRealm.where(User::class.java).findFirst()
                     u?.let { user ->
-                        slider.value = user.rankPref
-                        findViewById<TextView>(R.id.select_rank_value)?.text =
-                            user.rankPref.toInt().toString()
+                        userRank = user.rankPref
                     }
                 }
             }
+
+            findViewById<TextView>(R.id.select_rank_value)?.text =
+                userRank.toInt().toString()
+            slider.value = userRank
             recyclerView = findViewById(R.id.recycler_view)
             recyclerView.setController(epoxyController)
             if (grid != 0) {
