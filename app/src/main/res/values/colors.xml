@@ -25,5 +25,5 @@
     <color name="lightGray">#808080</color>
     <color name="darkerGray">#ff3C4043</color>
     <color name="comfyGreen">#18F600</color>
-
+    <color name="red">#FF0000</color>
 </resources>

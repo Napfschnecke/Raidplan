@@ -50,7 +50,7 @@
     <string name="melee">Melee</string>
     <string name="range">Range</string>
 
-
+    <string name="phase">Phase</string>
     <string name="p1">Phase 1</string>
     <string name="chains1">Chains 1</string>
     <string name="chains2">Chains 2</string>

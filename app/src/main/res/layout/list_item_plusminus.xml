@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="stroke"
+            type="String" />
+        <variable
+            name="onClick"
+            type="android.view.View.OnClickListener" />
+        <variable
+            name="onClick2"
+            type="android.view.View.OnClickListener" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/minus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_remove_24"
+            android:onClick="@{onClick}"
+            android:layout_toStartOf="@id/stroke"
+            android:layout_centerVertical="true"/>
+
+        <TextView
+            android:id="@+id/stroke"
+            android:text="@{stroke}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorAccent"
+            android:textSize="16sp"
+            android:layout_centerInParent="true"
+            android:layout_marginEnd="5dp"
+            android:layout_marginStart="5dp"/>
+
+        <ImageView
+            android:id="@+id/plus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_add_24"
+            android:onClick="@{onClick2}"
+            android:layout_toEndOf="@id/stroke"
+            android:layout_centerVertical="true"/>
+    </RelativeLayout>
+
+</layout>

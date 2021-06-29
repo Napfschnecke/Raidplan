@@ -21,154 +21,10 @@ open class DataCrawler {
     companion object {
 
         var step = 0.0
-        val requestService = RequestGenerator.createService(
+        private val requestService = RequestGenerator.createService(
             RequestService::class.java
         )
 
-        /**
-         * retrieve a list with keystone data
-         */
-        fun getKeystoneData(
-            act: MainActivity,
-            char: Character? = null,
-            progressBar: ProgressBar? = null
-        ) {
-
-            val call = requestService.getKeystoneProfile(
-                "${char?.server?.toLowerCase()}",
-                "${char?.name?.toLowerCase()}",
-                "profile-eu",
-                "en_gb",
-                "${ApiData.AUTH_TOKEN}"
-            )
-
-            if (ApiData.AUTH_EXPIRATON < System.currentTimeMillis()) {
-                act.reAuthorize(403)
-            }
-
-            call.enqueue(object : Callback<JsonObject> {
-                override fun onResponse(
-                    call: Call<JsonObject>,
-                    response: Response<JsonObject>
-                ) {
-                    if (response.code() == 401 || response.code() == 403 || response.code() == 404) {
-                        progressBar?.let {
-                            it.progress = (it.progress + step).toInt()
-                            if (it.progress >= 990) {
-                                it.isVisible = false
-                            }
-                        }
-                        act.reAuthorize(response.code())
-                        return
-                    }
-
-                    val json = response.body()?.get("current_period")?.asJsonObject
-                    val period = json?.get("period")?.asJsonObject
-
-                    Realm.getDefaultInstance().use { realm ->
-
-                        val user = realm.where(User::class.java).findFirst()
-
-                        user?.let { u ->
-
-                            if (u.currentPeriod == 0) {
-                                json?.let { js ->
-                                    period?.let { p ->
-                                        setCurrentPeriod(realm, u, js, char, requestService, p, act)
-                                    }
-                                }
-                            } else {
-                                if (period?.get("id")?.asInt == u.currentPeriod) {
-                                    storeDungeonInfo(realm, json, char)
-                                } else {
-                                }
-                            }
-                        }
-                    }
-                }
-
-                override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                    Log.d("error", "${t.message}")
-                }
-            })
-
-        }
-
-        private fun setCurrentPeriod(
-            realm: Realm,
-            user: User,
-            json: JsonObject,
-            char: Character?,
-            requestService: RequestService,
-            period: JsonObject,
-            act: MainActivity
-        ) {
-
-            val periodCall = requestService.getKeyPeriod(
-                period["id"].asString,
-                "eu",
-                "dynamic-eu",
-                "en_gb",
-                "${ApiData.AUTH_TOKEN}"
-            )
-            periodCall.enqueue(object : Callback<JsonObject> {
-                override fun onResponse(
-                    call: Call<JsonObject>,
-                    response: Response<JsonObject>
-                ) {
-                    if (response.code() == 401 || response.code() == 403 || response.code() == 404) {
-                        act.reAuthorize(response.code())
-                        return
-                    }
-                    val endStamp = response.body()?.get("end_timestamp")?.asLong
-                    endStamp?.let {
-                        if (System.currentTimeMillis() < endStamp) {
-                            realm.executeTransaction {
-                                user.currentPeriod = period["id"].asInt
-                            }
-                            storeDungeonInfo(realm, json, char)
-                        }
-                    }
-                }
-
-                override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-
-                }
-            })
-
-        }
-
-        private fun storeDungeonInfo(realm: Realm, json: JsonObject?, char: Character?) {
-            realm.executeTransaction { r ->
-
-                val runs = json?.asJsonObject?.get("best_runs")
-                runs?.let {
-                    val array = it.asJsonArray
-
-                    val player = r.where(Character::class.java)
-                        .equalTo("name", "${char?.name}")
-                        .findFirst()
-
-                    player?.dungeonList?.clear()
-
-                    array.forEach { dung ->
-                        val newDungeon = Dungeon()
-                        val d = dung.asJsonObject["dungeon"].asJsonObject
-                        newDungeon.name = d["name"].toString().replace("\"", "")
-                        var sec = dung.asJsonObject["duration"].asInt / 1000
-                        val min = sec / 60
-                        sec %= 60
-                        newDungeon.duration =
-                            "$min:${sec.toString().padStart(2, '0')}"
-                        newDungeon.level =
-                            dung.asJsonObject["keystone_level"].toString()
-                        newDungeon.timed =
-                            dung.asJsonObject["is_completed_within_time"].asBoolean
-                        player?.dungeonList?.add(newDungeon)
-                    }
-                }
-            }
-        }
 
         /**
          * retrieve accountinfo (id and battletag)
@@ -369,6 +225,9 @@ open class DataCrawler {
                             g?.let { gg ->
                                 val gu = r.copyFromRealm(gg)
                                 getGuildRosterData(gu.roster)
+                                act.runOnUiThread {
+                                    act.showMainFragment()
+                                }
                             }
                         }
                     }

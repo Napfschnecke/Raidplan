@@ -16,20 +16,48 @@
         android:paddingLeft="@dimen/activity_vertical_margin"
         android:paddingStart="@dimen/activity_vertical_margin"
         android:paddingRight="@dimen/activity_vertical_margin"
-        android:paddingEnd="@dimen/activity_vertical_margin"/>
+        android:paddingEnd="@dimen/activity_vertical_margin"
+        android:layout_marginTop="5dp"/>
 
-    <com.airbnb.epoxy.EpoxyRecyclerView
-        android:id="@+id/recycler_view_2"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/toolbarlayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
         android:paddingLeft="@dimen/activity_vertical_margin"
         android:paddingStart="@dimen/activity_vertical_margin"
         android:paddingRight="@dimen/activity_vertical_margin"
-        android:paddingEnd="@dimen/activity_vertical_margin"
-        android:orientation="horizontal"
-        android:layout_marginTop="5dp"
-        android:layout_gravity="center_horizontal"/>
+        android:paddingEnd="@dimen/activity_vertical_margin">
+
+        <ImageView
+            android:id="@+id/arrowLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_arrow_back_ios_24"
+            android:layout_alignParentStart="true"
+            android:layout_centerInParent="true" />
+
+        <com.airbnb.epoxy.EpoxyRecyclerView
+            android:id="@+id/recycler_view_2"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/activity_vertical_margin"
+            android:paddingStart="@dimen/activity_vertical_margin"
+            android:paddingRight="@dimen/activity_vertical_margin"
+            android:paddingEnd="@dimen/activity_vertical_margin"
+            android:layout_toEndOf="@id/arrowLeft"
+            android:layout_toStartOf="@id/arrowRight"/>
+
+        <ImageView
+            android:id="@+id/arrowRight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_arrow_forward_ios_24"
+            android:layout_centerInParent="true"
+            android:layout_alignParentEnd="true"/>
+
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/zoomcont"
@@ -40,7 +68,6 @@
             android:id="@+id/largeImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/tarragrue_area"
             android:layout_centerVertical="true"/>
 
         <com.raidplan.util.CustomDrawView

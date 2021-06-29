@@ -97,7 +97,19 @@ open class Classes {
                 "Melee" -> R.drawable.ic_melee
                 "Tank" -> R.drawable.ic_tank
                 "Healer" -> R.drawable.ic_healer
+                "Boss" -> R.drawable.ic_boss
                 else -> R.drawable.ic_tank
+            }
+        }
+
+        fun getRoleById(id: Int): String {
+            return when (id) {
+                0 -> "Tank"
+                1 -> "Healer"
+                2 -> "Melee"
+                3 -> "Range"
+                4 -> "Boss"
+                else -> "Boss"
             }
         }
 

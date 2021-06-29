@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
             name="onClick"
             type="android.view.View.OnClickListener" />
 
         <variable
-            name="icon"
-            type="android.graphics.drawable.Drawable" />
-
-        <variable
-            name="bg"
-            type="android.graphics.drawable.Drawable" />
+            name="color"
+            type="Integer" />
 
     </data>
 
@@ -21,12 +19,12 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/tool"
+            android:id="@+id/colorpalette"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@{icon}"
             android:onClick="@{onClick}"
-            android:background="@{bg}"
+            android:src="@drawable/ic_baseline_brush_24"
+            app:tint="@{color}"
             android:layout_centerInParent="true"/>
     </RelativeLayout>
 </layout>

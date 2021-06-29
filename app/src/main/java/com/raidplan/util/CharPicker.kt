@@ -13,6 +13,8 @@ import com.raidplan.data.Character
 import com.raidplan.data.Guild
 import com.raidplan.data.User
 import io.realm.Realm
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -93,8 +95,9 @@ class CharPicker {
                         }
                     }
                 }
-                DataCrawler.getGuildMembers(guild, "${char.server}", activity)
-                activity.showMainFragment()
+                GlobalScope.launch {
+                    DataCrawler.getGuildMembers(guild, "${char.server}", activity)
+                }
             }
 
             override fun onFailure(call: Call<JsonObject>, t: Throwable) {

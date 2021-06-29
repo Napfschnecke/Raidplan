@@ -1,13 +1,19 @@
 package com.raidplan.ui
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Parcelable
+import android.view.View
 import androidx.core.content.res.ResourcesCompat
 import com.airbnb.mvrx.MvRx
 import com.airbnb.mvrx.MvRxState
 import com.airbnb.mvrx.fragmentViewModel
+import com.flask.colorpicker.ColorPickerView
+import com.flask.colorpicker.builder.ColorPickerDialogBuilder
 import com.raidplan.*
 import com.raidplan.data.Bosses
+import com.raidplan.data.Classes
 import com.raidplan.data.Raidmarker
 import com.raidplan.util.MvRxViewModel
 import com.raidplan.util.simpleController
@@ -49,8 +55,15 @@ class RaidPosViewModel(initialState: RaidPosState) : MvRxViewModel<RaidPosState>
         }
     }
 
-    fun switchToolbar(newPos: Int) {
+    fun switchToolbar(direction: Int) {
         setState {
+            var newPos = this.toolbar
+            newPos += direction
+            if (newPos < 0) {
+                newPos = 2
+            } else if (newPos > 2) {
+                newPos = 0
+            }
             copy(
                 toolbar = newPos
             )
@@ -58,7 +71,7 @@ class RaidPosViewModel(initialState: RaidPosState) : MvRxViewModel<RaidPosState>
     }
 }
 
-class RaidPosMvrx(boss: String) : ZoomFragment(boss) {
+class RaidPosMvrx(boss: String, grid: Int = 0) : ZoomFragment(boss, grid) {
 
     private val viewModel: RaidPosViewModel by fragmentViewModel()
 
@@ -84,56 +97,44 @@ class RaidPosMvrx(boss: String) : ZoomFragment(boss) {
         updateImage(Bosses.getAreaByName(boss))
     }
 
+    override fun updateGridSpan(span: Int) {
+        activity?.runOnUiThread {
+            layoutManager?.spanCount = span
+        }
+    }
+
     override fun epoxyController() = simpleController(viewModel) { state ->
 
         if ("${state.boss}".contains("Sylvanas Windrunner")) {
-            areaSwitch {
-                id("switch")
-                p1Check(false)
-                p2Check(false)
-                p3Check(false)
-                p4Check(false)
-                when (state.phase) {
-                    1 -> p1Check(true)
-                    2 -> p2Check(true)
-                    3 -> p3Check(true)
-                    4 -> p4Check(true)
-
-                }
-                onClick1 { v ->
-                    viewModel.switchPhase(1)
-                    updateBossArea("${state.boss?.subSequence(0, state.boss.length - 1)}1")
-                }
-                onClick2 { v ->
-                    viewModel.switchPhase(2)
-                    updateBossArea("${state.boss?.subSequence(0, state.boss.length - 1)}2")
-                }
-                onClick3 { v ->
-                    viewModel.switchPhase(3)
-                    updateBossArea("${state.boss?.subSequence(0, state.boss.length - 1)}3")
-                }
-                onClick4 { v ->
-                    viewModel.switchPhase(4)
-                    updateBossArea("${state.boss?.subSequence(0, state.boss.length - 1)}4")
+            for (i in 1..4) {
+                check {
+                    id("check$i")
+                    phase(
+                        "${resources.getString(R.string.phase)} $i"
+                    )
+                    checked(
+                        state.phase == i
+                    )
+                    onClick { v ->
+                        viewModel.switchPhase(i)
+                        updateBossArea("${state.boss?.subSequence(0, state.boss.length - 1)}$i")
+                    }
                 }
             }
         } else if ("${state.boss}".contains("Kel'Thuzad")) {
-            areaSwitchKel {
-                id("switchKel")
-                p1Check(false)
-                p2Check(false)
-                when (state.phase) {
-                    1 -> p1Check(true)
-                    2 -> p2Check(true)
-
-                }
-                onClick1 { v ->
-                    viewModel.switchPhase(1)
-                    updateBossArea("${state.boss?.subSequence(0, state.boss.length - 1)}1")
-                }
-                onClick2 { v ->
-                    viewModel.switchPhase(2)
-                    updateBossArea("${state.boss?.subSequence(0, state.boss.length - 1)}2")
+            for (i in 1..2) {
+                check {
+                    id("check$i")
+                    phase(
+                        "${resources.getString(R.string.phase)} $i"
+                    )
+                    checked(
+                        state.phase == i
+                    )
+                    onClick { v ->
+                        viewModel.switchPhase(i)
+                        updateBossArea("${state.boss?.subSequence(0, state.boss.length - 1)}$i")
+                    }
                 }
             }
         }
@@ -141,28 +142,52 @@ class RaidPosMvrx(boss: String) : ZoomFragment(boss) {
 
     override fun secondEpoxyController() = simpleController(viewModel) { state ->
 
-        tool {
-            id("arrowLeft")
-            icon(
-                ResourcesCompat.getDrawable(
-                    resources,
-                    R.drawable.ic_baseline_arrow_back_ios_24,
-                    context?.theme
-                )
-            )
-            onClick { v ->
-                when (state.toolbar) {
-                    0 -> viewModel.switchToolbar(2)
-                    else -> viewModel.switchToolbar(state.toolbar - 1)
-                }
-            }
-        }
-
         when (state.toolbar) {
             0 -> {
+                updateGridSpan(6)
                 drawview.setTouchBlock(true)
+                for (i in 0..4) {
+                    tool {
+                        id("role$i")
+                        icon(
+                            ResourcesCompat.getDrawable(
+                                resources,
+                                Classes.getIconByRole(Classes.getRoleById(i)),
+                                context?.theme
+                            )
+                        )
+                        if (state.selection == i + 1) {
+                            bg(
+                                ResourcesCompat.getDrawable(
+                                    resources,
+                                    R.drawable.rectangle_fill,
+                                    context?.theme
+                                )
+                            )
+                        }
+                        onClick { v ->
+                            setMarker(0)
+                            setSelection(i + 1)
+                        }
+                    }
+                }
+                tool {
+                    id("clearMarker")
+                    icon(
+                        ResourcesCompat.getDrawable(
+                            resources,
+                            R.drawable.ic_baseline_delete_24,
+                            context?.theme
+                        )
+                    )
+                    onClick { v ->
+                        attacher.clearIcons()
+                    }
+                }
             }
             1 -> {
+                updateGridSpan(9)
+                drawview.setTouchBlock(true)
                 for (i in 0..7) {
                     tool {
                         id("marker$i")
@@ -177,13 +202,12 @@ class RaidPosMvrx(boss: String) : ZoomFragment(boss) {
                             bg(
                                 ResourcesCompat.getDrawable(
                                     resources,
-                                    R.drawable.rectangle_frame,
+                                    R.drawable.rectangle_fill,
                                     context?.theme
                                 )
                             )
                         }
                         onClick { v ->
-                            drawview.setTouchBlock(true)
                             setMarker(i + 1)
                             setSelection(0)
                         }
@@ -205,20 +229,8 @@ class RaidPosMvrx(boss: String) : ZoomFragment(boss) {
 
             }
             2 -> {
+                updateGridSpan(5)
                 drawview.setTouchBlock(false)
-                tool {
-                    id("clear")
-                    icon(
-                        ResourcesCompat.getDrawable(
-                            resources,
-                            R.drawable.ic_baseline_delete_24,
-                            context?.theme
-                        )
-                    )
-                    onClick { v ->
-                        drawview.clearCanvas()
-                    }
-                }
 
                 tool {
                     id("undo")
@@ -248,15 +260,39 @@ class RaidPosMvrx(boss: String) : ZoomFragment(boss) {
                     }
                 }
 
-                tool {
-                    id("minusStroke")
-                    icon(
-                        ResourcesCompat.getDrawable(
-                            resources,
-                            R.drawable.ic_baseline_remove_24,
-                            context?.theme
-                        )
+                colorbox {
+                    id("colorPicker")
+
+                    color(
+                        drawview.getColor()
                     )
+
+                    onClick { v ->
+                        ColorPickerDialogBuilder
+                            .with(context, R.style.CustomAlertDialog)
+                            .setTitle("Choose color")
+                            .initialColor(drawview.getColor())
+                            .wheelType(ColorPickerView.WHEEL_TYPE.CIRCLE)
+                            .density(12)
+                            .setPositiveButton(
+                                "Select"
+                            ) { dialog, selectedColor, allColors ->
+                                drawview.setColor(selectedColor)
+                                requestModelBuild()
+                            }
+                            .setNegativeButton(
+                                "Cancel"
+                            ) { dialog, which ->
+                                dialog.dismiss()
+                            }
+                            .build()
+                            .show()
+                    }
+                }
+
+                plusminus {
+                    id("stroke")
+                    stroke("${drawview.getStrokeWidth().toInt()}")
                     onClick { v ->
                         drawview.setStrokeWidth(
                             (drawview.getStrokeWidth() - 1.0f).coerceAtLeast(
@@ -265,47 +301,44 @@ class RaidPosMvrx(boss: String) : ZoomFragment(boss) {
                         )
                         requestModelBuild()
                     }
-                }
-
-                simpleText {
-                    id("strokeCurrent")
-                    stroke("${drawview.getStrokeWidth().toInt()}")
+                    onClick2 { v ->
+                        drawview.setStrokeWidth(
+                            (drawview.getStrokeWidth() + 1.0f)
+                        )
+                        requestModelBuild()
+                    }
                 }
 
                 tool {
-                    id("plusStroke")
+                    id("clear")
                     icon(
                         ResourcesCompat.getDrawable(
                             resources,
-                            R.drawable.ic_baseline_add_24,
+                            R.drawable.ic_baseline_delete_24,
                             context?.theme
                         )
                     )
                     onClick { v ->
-                        drawview.setStrokeWidth((drawview.getStrokeWidth() + 1.0f))
-                        requestModelBuild()
+                        drawview.clearCanvas()
                     }
                 }
             }
 
         }
+    }
 
-        tool {
-            id("arrowRight")
-            icon(
-                ResourcesCompat.getDrawable(
-                    resources,
-                    R.drawable.ic_baseline_arrow_forward_ios_24,
-                    context?.theme
-                )
-            )
-            onClick { v ->
-                when (state.toolbar) {
-                    2 -> viewModel.switchToolbar(0)
-                    else -> viewModel.switchToolbar(state.toolbar + 1)
-                }
-            }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        arrowLeft?.setOnClickListener { v ->
+            setMarker(0)
+            setSelection(0)
+            viewModel.switchToolbar(-1)
         }
+        arrowRight?.setOnClickListener { v ->
+            setMarker(0)
+            setSelection(0)
+            viewModel.switchToolbar(1)
+        }
+        super.onViewCreated(view, savedInstanceState)
     }
 
     companion object {

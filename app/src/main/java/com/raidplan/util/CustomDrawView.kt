@@ -84,6 +84,10 @@ class CustomDrawView(context: Context, attrs: AttributeSet) :
         }
     }
 
+    fun getColor(): Int {
+        return mPaintOptions.color
+    }
+
     fun setAlpha(newAlpha: Int) {
         val alpha = (newAlpha * 255) / 100
         mPaintOptions.alpha = alpha
